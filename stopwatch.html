@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>스탑워치</title>
+<style>
+  :root {
+    --bg: #f4f6fb;
+    --card: #ffffff;
+    --text: #1c2230;
+    --muted: #9aa3b2;
+    --line: #eef1f6;
+    --accent: #5b7cfa;
+    --green: #1fb877;
+    --green-soft: #e6f8f0;
+    --red: #f0556a;
+    --red-soft: #fdebee;
+    --btn-soft: #f1f3f9;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+  }
+  .card {
+    background: var(--card);
+    border-radius: 28px;
+    padding: 48px 40px 40px;
+    width: 100%;
+    max-width: 420px;
+    box-shadow: 0 24px 60px rgba(33, 44, 80, 0.10);
+  }
+  .title {
+    text-align: center;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 3px;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-bottom: 28px;
+  }
+  .display {
+    font-variant-numeric: tabular-nums;
+    font-size: 68px;
+    font-weight: 300;
+    text-align: center;
+    letter-spacing: 1px;
+    color: var(--text);
+  }
+  .display .ms { font-size: 34px; color: var(--muted); font-weight: 400; }
+  .buttons {
+    display: flex;
+    gap: 12px;
+    margin: 40px 0 4px;
+  }
+  button {
+    flex: 1;
+    padding: 17px;
+    font-size: 16px;
+    font-weight: 700;
+    border: none;
+    border-radius: 16px;
+    cursor: pointer;
+    transition: transform .08s ease, background .2s ease, opacity .2s ease;
+  }
+  button:active { transform: scale(0.96); }
+  button:disabled { opacity: .4; cursor: not-allowed; }
+  #lapReset { background: var(--btn-soft); color: var(--text); }
+  #startStop.stopped { background: var(--green); color: #fff; box-shadow: 0 8px 20px rgba(31,184,119,.28); }
+  #startStop.running { background: var(--red); color: #fff; box-shadow: 0 8px 20px rgba(240,85,106,.28); }
+  .laps {
+    list-style: none;
+    margin-top: 20px;
+    max-height: 240px;
+    overflow-y: auto;
+  }
+  .laps li {
+    display: flex;
+    justify-content: space-between;
+    padding: 14px 6px;
+    border-bottom: 1px solid var(--line);
+    font-variant-numeric: tabular-nums;
+    font-size: 15px;
+    color: var(--text);
+  }
+  .laps li .label { color: var(--muted); font-weight: 600; }
+  .laps li.best { background: var(--green-soft); border-radius: 10px; border-bottom-color: transparent; }
+  .laps li.best .label, .laps li.best .time { color: var(--green); }
+  .laps li.worst { background: var(--red-soft); border-radius: 10px; border-bottom-color: transparent; }
+  .laps li.worst .label, .laps li.worst .time { color: var(--red); }
+  .laps::-webkit-scrollbar { width: 6px; }
+  .laps::-webkit-scrollbar-thumb { background: var(--line); border-radius: 3px; }
+</style>
+</head>
+<body>
+  <div class="card">
+    <div class="title">Stopwatch</div>
+    <div class="display" id="display">00:00<span class="ms">.00</span></div>
+    <div class="buttons">
+      <button id="lapReset" disabled>랩</button>
+      <button id="startStop" class="stopped">시작</button>
+    </div>
+    <ul class="laps" id="laps"></ul>
+  </div>
+
+<script>
+  const display = document.getElementById('display');
+  const startStop = document.getElementById('startStop');
+  const lapReset = document.getElementById('lapReset');
+  const lapsEl = document.getElementById('laps');
+
+  let startTime = 0;      // performance.now() 기준 시작 시각
+  let elapsed = 0;        // 정지 시점까지 누적된 시간(ms)
+  let rafId = null;
+  let running = false;
+  let lapTimes = [];      // 각 랩의 소요 시간
+  let lastLap = 0;
+
+  function format(ms) {
+    const totalCs = Math.floor(ms / 10);          // centisecond
+    const cs = totalCs % 100;
+    const totalSec = Math.floor(totalCs / 100);
+    const sec = totalSec % 60;
+    const min = Math.floor(totalSec / 60);
+    const pad = (n) => String(n).padStart(2, '0');
+    return { main: `${pad(min)}:${pad(sec)}`, ms: `.${pad(cs)}` };
+  }
+
+  function render(ms) {
+    const t = format(ms);
+    display.innerHTML = `${t.main}<span class="ms">${t.ms}</span>`;
+  }
+
+  function tick() {
+    render(elapsed + (performance.now() - startTime));
+    rafId = requestAnimationFrame(tick);
+  }
+
+  function start() {
+    running = true;
+    startTime = performance.now();
+    rafId = requestAnimationFrame(tick);
+    startStop.textContent = '정지';
+    startStop.className = 'running';
+    lapReset.textContent = '랩';
+    lapReset.disabled = false;
+  }
+
+  function stop() {
+    running = false;
+    cancelAnimationFrame(rafId);
+    elapsed += performance.now() - startTime;
+    render(elapsed);
+    startStop.textContent = '계속';
+    startStop.className = 'stopped';
+    lapReset.textContent = '리셋';
+  }
+
+  function reset() {
+    elapsed = 0;
+    lastLap = 0;
+    lapTimes = [];
+    lapsEl.innerHTML = '';
+    render(0);
+    lapReset.textContent = '랩';
+    lapReset.disabled = true;
+  }
+
+  function addLap() {
+    const total = elapsed + (running ? performance.now() - startTime : 0);
+    const lapDuration = total - lastLap;
+    lastLap = total;
+    lapTimes.push(lapDuration);
+    renderLaps();
+  }
+
+  function renderLaps() {
+    lapsEl.innerHTML = '';
+    let minIdx = 0, maxIdx = 0;
+    if (lapTimes.length > 1) {
+      lapTimes.forEach((t, i) => {
+        if (t < lapTimes[minIdx]) minIdx = i;
+        if (t > lapTimes[maxIdx]) maxIdx = i;
+      });
+    }
+    lapTimes.forEach((t, i) => {
+      const li = document.createElement('li');
+      if (lapTimes.length > 1 && i === minIdx) li.className = 'best';
+      if (lapTimes.length > 1 && i === maxIdx) li.className = 'worst';
+      const f = format(t);
+      li.innerHTML = `<span class="label">랩 ${i + 1}</span><span class="time">${f.main}${f.ms}</span>`;
+      lapsEl.prepend(li);
+    });
+  }
+
+  startStop.addEventListener('click', () => { running ? stop() : start(); });
+  lapReset.addEventListener('click', () => { running ? addLap() : reset(); });
+
+  // 스페이스바: 시작/정지, L: 랩/리셋
+  document.addEventListener('keydown', (e) => {
+    if (e.code === 'Space') { e.preventDefault(); running ? stop() : start(); }
+    if (e.key.toLowerCase() === 'l' && !lapReset.disabled) {
+      running ? addLap() : reset();
+    }
+  });
+
+  render(0);
+</script>
+</body>
+</html>
