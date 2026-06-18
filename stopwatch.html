@@ -3,132 +3,59 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Cronómetro · 프리다 칼로</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;1,500&family=Cormorant+Garamond:wght@500;600&display=swap" rel="stylesheet">
+<title>스탑워치</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⏱️</text></svg>">
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  :root {
-    --rojo: #b3261a;      /* terracotta red */
-    --verde: #1f6b4f;     /* deep green */
-    --oro: #e0a526;       /* marigold gold */
-    --azul: #1d5a8a;      /* cobalt blue */
-    --magenta: #c0356b;   /* bougainvillea */
-    --crema: #f5e9cf;     /* cream */
-    --tinta: #2a1810;     /* dark brown ink */
-  }
   body {
-    font-family: "Cormorant Garamond", serif;
-    background:
-      radial-gradient(circle at 20% 15%, rgba(224,165,38,.18), transparent 40%),
-      radial-gradient(circle at 85% 80%, rgba(192,53,107,.18), transparent 45%),
-      #3a1f14;
     min-height: 100vh;
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 24px;
+    background: #0f1115;
+    color: #f5f5f7;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    -webkit-tap-highlight-color: transparent;
   }
-  .frame {
-    position: relative;
+  .card {
     width: 100%;
-    max-width: 440px;
-    background:
-      repeating-linear-gradient(45deg, rgba(0,0,0,.02) 0 12px, rgba(0,0,0,0) 12px 24px),
-      var(--crema);
-    border: 10px solid var(--verde);
-    border-radius: 18px;
-    box-shadow:
-      0 0 0 4px var(--oro),
-      0 0 0 14px var(--rojo),
-      0 22px 50px rgba(0,0,0,.55);
-    padding: 44px 32px 36px;
+    max-width: 360px;
+    padding: 40px 28px;
     text-align: center;
-    color: var(--tinta);
-    overflow: hidden;
   }
-  /* floral corners */
-  .flower {
-    position: absolute;
-    font-size: 30px;
-    opacity: .9;
-    user-select: none;
-    pointer-events: none;
-  }
-  .f1 { top: 6px; left: 10px; transform: rotate(-15deg); }
-  .f2 { top: 6px; right: 10px; transform: rotate(20deg); }
-  .f3 { bottom: 6px; left: 10px; transform: rotate(15deg); }
-  .f4 { bottom: 6px; right: 10px; transform: rotate(-20deg); }
-
-  .title {
-    font-family: "Playfair Display", serif;
-    font-style: italic;
-    font-size: 26px;
-    color: var(--rojo);
-    letter-spacing: .5px;
-    margin-bottom: 2px;
-  }
-  .subtitle {
-    font-size: 16px;
-    letter-spacing: 4px;
-    text-transform: uppercase;
-    color: var(--verde);
-    margin-bottom: 22px;
-  }
-  .leaf-divider {
-    color: var(--verde);
-    font-size: 18px;
-    letter-spacing: 6px;
-    margin-bottom: 18px;
-  }
-
-  .display {
-    font-family: "Playfair Display", serif;
-    font-size: 70px;
-    font-weight: 600;
+  .time {
     font-variant-numeric: tabular-nums;
-    color: var(--tinta);
-    line-height: 1;
-    text-shadow: 2px 2px 0 rgba(224,165,38,.55);
+    font-feature-settings: "tnum";
+    font-size: 64px;
+    font-weight: 200;
+    letter-spacing: 1px;
+    margin-bottom: 36px;
   }
-  .display .ms {
-    font-size: 30px;
-    color: var(--magenta);
-  }
-
-  .buttons {
-    display: flex;
-    gap: 14px;
-    justify-content: center;
-    margin: 30px 0 22px;
-  }
+  .time .cs { font-size: 32px; color: #8a8f98; }
+  .controls { display: flex; gap: 12px; justify-content: center; }
   button {
     flex: 1;
-    padding: 15px 0;
-    font-family: "Cormorant Garamond", serif;
-    font-size: 20px;
-    font-weight: 600;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    border: 3px solid var(--tinta);
-    border-radius: 12px;
+    padding: 16px 0;
+    font-size: 16px;
+    font-weight: 500;
+    border: none;
+    border-radius: 14px;
     cursor: pointer;
-    color: var(--crema);
-    box-shadow: 3px 3px 0 var(--tinta);
-    transition: transform .06s, box-shadow .06s, background .2s;
+    color: #f5f5f7;
+    background: #2a2d35;
+    transition: transform .08s ease, background .15s ease, opacity .15s ease;
   }
-  button:active {
-    transform: translate(3px, 3px);
-    box-shadow: 0 0 0 var(--tinta);
-  }
-  button:disabled { opacity: .4; cursor: default; box-shadow: 3px 3px 0 var(--tinta); }
-  .start { background: var(--verde); }
-  .stop  { background: var(--rojo); }
-  .lap   { background: var(--azul); }
-  .reset { background: var(--magenta); }
-
+  button:hover { background: #353942; }
+  button:active { transform: scale(0.96); }
+  button:focus-visible { outline: 2px solid #6ea8fe; outline-offset: 2px; }
+  button:disabled { opacity: .35; cursor: not-allowed; }
+  #startBtn { background: #2e7d4f; }
+  #startBtn:hover { background: #36925c; }
+  #startBtn.running { background: #b03636; }
+  #startBtn.running:hover { background: #c44040; }
   .laps {
     list-style: none;
-    margin-top: 6px;
+    margin-top: 28px;
     max-height: 220px;
     overflow-y: auto;
     text-align: left;
@@ -136,120 +63,117 @@
   .laps li {
     display: flex;
     justify-content: space-between;
-    padding: 11px 6px;
-    border-bottom: 1px dashed var(--verde);
-    font-size: 19px;
+    padding: 12px 4px;
     font-variant-numeric: tabular-nums;
+    font-size: 15px;
+    border-bottom: 1px solid #22252c;
+    color: #c7ccd4;
   }
-  .laps li span:first-child {
-    color: var(--rojo);
-    font-style: italic;
-    font-family: "Playfair Display", serif;
-  }
-  .laps li span:last-child { color: var(--tinta); }
-  .laps::-webkit-scrollbar { width: 6px; }
-  .laps::-webkit-scrollbar-thumb { background: var(--oro); border-radius: 3px; }
+  .laps li .idx { color: #8a8f98; }
 </style>
 </head>
 <body>
-  <div class="frame">
-    <span class="flower f1">🌺</span>
-    <span class="flower f2">🌼</span>
-    <span class="flower f3">🌷</span>
-    <span class="flower f4">🌻</span>
-
-    <div class="title">Cronómetro</div>
-    <div class="subtitle">El Tiempo</div>
-    <div class="leaf-divider">🌿 ❦ 🌿</div>
-
-    <div class="display"><span id="time">00:00</span><span class="ms" id="ms">.00</span></div>
-
-    <div class="buttons">
-      <button class="lap" id="lapBtn" disabled>Vuelta</button>
-      <button class="start" id="startBtn">Iniciar</button>
+  <main class="card">
+    <div class="time" id="display" aria-live="off">00:00<span class="cs">.00</span></div>
+    <div class="controls">
+      <button id="lapBtn" disabled>랩</button>
+      <button id="startBtn">시작</button>
     </div>
-
     <ul class="laps" id="laps"></ul>
-  </div>
+  </main>
 
 <script>
-  let startTime = 0;
-  let elapsed = 0;
-  let timerId = null;
-  let running = false;
-  let lapCount = 0;
-  let lastLap = 0;
-
-  const timeEl = document.getElementById('time');
-  const msEl = document.getElementById('ms');
+  const display = document.getElementById('display');
   const startBtn = document.getElementById('startBtn');
   const lapBtn = document.getElementById('lapBtn');
   const lapsEl = document.getElementById('laps');
 
-  function format(t) {
-    const totalMs = Math.floor(t);
-    const m = Math.floor(totalMs / 60000);
-    const s = Math.floor((totalMs % 60000) / 1000);
-    const cs = Math.floor((totalMs % 1000) / 10);
-    return {
-      main: `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`,
-      ms: `.${String(cs).padStart(2,'0')}`
-    };
+  let running = false;
+  let startTime = 0;      // 현재 구간 시작 시각
+  let elapsed = 0;        // 누적 경과(ms)
+  let rafId = null;
+  let lapCount = 0;
+  let lastLapTime = 0;
+
+  function now() { return performance.now(); }
+
+  function format(ms) {
+    const totalCs = Math.floor(ms / 10);
+    const cs = totalCs % 100;
+    const totalSec = Math.floor(totalCs / 100);
+    const s = totalSec % 60;
+    const totalMin = Math.floor(totalSec / 60);
+    const m = totalMin % 60;
+    const h = Math.floor(totalMin / 60);
+    const p = (n) => String(n).padStart(2, '0');
+    const main = h > 0 ? `${p(h)}:${p(m)}:${p(s)}` : `${p(m)}:${p(s)}`;
+    return { main, cs: p(cs) };
   }
 
   function render() {
-    const now = performance.now();
-    const total = elapsed + (running ? now - startTime : 0);
-    const f = format(total);
-    timeEl.textContent = f.main;
-    msEl.textContent = f.ms;
+    const total = elapsed + (running ? now() - startTime : 0);
+    const { main, cs } = format(total);
+    display.innerHTML = `${main}<span class="cs">.${cs}</span>`;
+  }
+
+  function tick() {
+    render();
+    rafId = requestAnimationFrame(tick);
   }
 
   function start() {
     running = true;
-    startTime = performance.now();
-    timerId = setInterval(render, 16);
-    startBtn.textContent = 'Parar';
-    startBtn.classList.replace('start', 'stop');
-    lapBtn.textContent = 'Vuelta';
+    startTime = now();
+    rafId = requestAnimationFrame(tick);
+    startBtn.textContent = '정지';
+    startBtn.classList.add('running');
+    lapBtn.textContent = '랩';
     lapBtn.disabled = false;
   }
 
   function stop() {
     running = false;
-    elapsed += performance.now() - startTime;
-    clearInterval(timerId);
-    startBtn.textContent = 'Seguir';
-    startBtn.classList.replace('stop', 'start');
-    lapBtn.textContent = 'Reiniciar';
-    lapBtn.classList.replace('lap', 'reset');
+    elapsed += now() - startTime;
+    cancelAnimationFrame(rafId);
+    render();
+    startBtn.textContent = '재개';
+    startBtn.classList.remove('running');
+    lapBtn.textContent = '리셋';
   }
 
   function reset() {
+    running = false;
+    cancelAnimationFrame(rafId);
     elapsed = 0;
+    startTime = 0;
     lapCount = 0;
-    lastLap = 0;
+    lastLapTime = 0;
     lapsEl.innerHTML = '';
     render();
-    startBtn.textContent = 'Iniciar';
-    lapBtn.textContent = 'Vuelta';
-    lapBtn.classList.replace('reset', 'lap');
+    startBtn.textContent = '시작';
+    lapBtn.textContent = '랩';
     lapBtn.disabled = true;
   }
 
-  function addLap() {
-    const total = elapsed + (running ? performance.now() - startTime : 0);
+  function lap() {
+    const total = elapsed + (running ? now() - startTime : 0);
+    const split = total - lastLapTime;
+    lastLapTime = total;
     lapCount++;
-    const lapTime = total - lastLap;
-    lastLap = total;
-    const f = format(lapTime);
+    const t = format(split);
     const li = document.createElement('li');
-    li.innerHTML = `<span>Vuelta ${lapCount}</span><span>${f.main}${f.ms}</span>`;
+    li.innerHTML = `<span class="idx">랩 ${lapCount}</span><span>${t.main}.${t.cs}</span>`;
     lapsEl.prepend(li);
   }
 
   startBtn.addEventListener('click', () => running ? stop() : start());
-  lapBtn.addEventListener('click', () => running ? addLap() : reset());
+  lapBtn.addEventListener('click', () => running ? lap() : reset());
+
+  // 스페이스: 시작/정지, L: 랩/리셋
+  document.addEventListener('keydown', (e) => {
+    if (e.code === 'Space') { e.preventDefault(); running ? stop() : start(); }
+    else if (e.key.toLowerCase() === 'l' && !lapBtn.disabled) { running ? lap() : reset(); }
+  });
 
   render();
 </script>
