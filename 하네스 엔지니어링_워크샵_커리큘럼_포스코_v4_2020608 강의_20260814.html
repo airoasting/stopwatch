@@ -1,0 +1,2045 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AX 교육 | 바이브 코딩·하네스 엔지니어링 실전 워크샵 | 포스코 | 16:9</title>
+<style>
+  @font-face {
+    font-family: 'Pretendard';
+    font-weight: 45 920;
+    font-style: normal;
+    font-display: swap;
+    src: url('assets/font/PretendardVariable.ttf') format('truetype-variations'),
+         url('assets/font/PretendardVariable.ttf') format('truetype');
+  }
+  @font-face { font-family: 'Pretendard'; font-weight: 400; font-display: swap; src: url('assets/font/Pretendard-Regular.otf') format('opentype'), url('assets/font/Pretendard-Regular.ttf') format('truetype'); }
+  @font-face { font-family: 'Pretendard'; font-weight: 500; font-display: swap; src: url('assets/font/Pretendard-Medium.otf') format('opentype'), url('assets/font/Pretendard-Medium.ttf') format('truetype'); }
+  @font-face { font-family: 'Pretendard'; font-weight: 600; font-display: swap; src: url('assets/font/Pretendard-SemiBold.otf') format('opentype'), url('assets/font/Pretendard-SemiBold.ttf') format('truetype'); }
+  @font-face { font-family: 'Pretendard'; font-weight: 700; font-display: swap; src: url('assets/font/Pretendard-Bold.otf') format('opentype'), url('assets/font/Pretendard-Bold.ttf') format('truetype'); }
+  @font-face { font-family: 'Pretendard'; font-weight: 800; font-display: swap; src: url('assets/font/Pretendard-ExtraBold.otf') format('opentype'), url('assets/font/Pretendard-ExtraBold.ttf') format('truetype'); }
+  @font-face { font-family: 'Pretendard'; font-weight: 900; font-display: swap; src: url('assets/font/Pretendard-Black.otf') format('opentype'), url('assets/font/Pretendard-Black.ttf') format('truetype'); }
+</style>
+<style>
+  :root {
+    --igm-red: #00588a;
+    --igm-red-deep: #013d61;
+    --green-from: #0a73af;
+    --green-mid: #0a73af;
+    --green-to: #013d61;
+    --green-grad: linear-gradient(135deg, #0a73af 0%, #00588a 52%, #013d61 100%);
+    --ink: #1a1a1a;
+    --ink-soft: #2a2a2a;
+    --muted: #6b6b6b;
+    --hairline: #e6e6e3;
+    --table-border: #d8d8d4;
+    --left-bg: #ECECEA;
+    --left-dot: rgba(0, 0, 0, 0.06);
+    --row-bg: #ffffff;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: 'Pretendard', 'Apple SD Gothic Neo', 'Noto Sans KR', -apple-system, sans-serif;
+    color: var(--ink);
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+    -webkit-font-feature-settings: "ss01", "ss02";
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  a { color: inherit; text-decoration: none; }
+
+  /* 16:9 slide */
+  @page { size: 13.333in 7.5in; margin: 0; }
+  .slide {
+    width: 13.333in;
+    height: 7.5in;
+    background: #fff;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+  .slide + .slide {
+    page-break-before: always;
+    break-before: page;
+  }
+
+  @media screen {
+    body {
+      background: #e8e8e6;
+      min-height: 100vh;
+      padding: 28px 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 32px;
+    }
+    .slide {
+      margin: 0 auto;
+      box-shadow: 0 4px 20px rgba(0,0,0,.10);
+      flex-shrink: 0;
+    }
+  }
+  @media print {
+    @page { size: 13.333in 7.5in; margin: 0; }
+    html, body {
+      margin: 0 !important;
+      padding: 0 !important;
+      background: #fff;
+      display: block !important;
+      gap: 0 !important;
+    }
+    .slide {
+      margin: 0 !important;
+      box-shadow: none;
+      width: 13.333in;
+      height: 7.5in;
+      overflow: hidden !important;
+      page-break-after: auto !important;
+      break-after: auto !important;
+      page-break-inside: avoid;
+      break-inside: avoid;
+    }
+    .slide + .slide {
+      page-break-before: always !important;
+      break-before: page !important;
+    }
+  }
+
+  /* Top bar */
+  .top-bar {
+    height: 8px;
+    background: var(--igm-red);
+    flex-shrink: 0;
+    display: flex;
+  }
+  .top-bar .accent-dark {
+    height: 100%;
+    width: 14%;
+    background: #1f2329;
+    margin-left: auto;
+  }
+
+  /* Main split layout */
+  .main {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 4in 1fr;
+    min-height: 0;
+  }
+
+  /* ============== LEFT — Title block ============== */
+  .left {
+    background: linear-gradient(160deg, #EAF1F7 0%, #E2EDF5 45%, #DBE9F2 100%);
+    position: relative;
+    padding: 0.65in 0.5in 0.45in 0.55in;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    overflow: hidden;
+  }
+  .left::before {
+    content: "";
+    position: absolute;
+    width: 4.2in;
+    height: 4.2in;
+    right: -1.8in;
+    bottom: -1.6in;
+    background: radial-gradient(circle, rgba(10,115,175,0.18) 0%, rgba(10,115,175,0.06) 42%, rgba(10,115,175,0) 70%);
+    pointer-events: none;
+  }
+  .left-content {
+    position: relative;
+  }
+
+  .client-logo {
+    height: 30px;
+    width: auto;
+    margin: 0 0 8px 0;
+    display: block;
+  }
+
+  .eyebrow {
+    font-size: 14pt;
+    font-weight: 900;
+    color: var(--igm-red);
+    margin: 0 0 26px;
+    letter-spacing: -0.4px;
+    line-height: 1;
+  }
+  .english-title {
+    font-size: 26pt;
+    font-weight: 900;
+    color: #1c1c1c;
+    line-height: 1;
+    letter-spacing: -0.6px;
+    margin: 28px 0 22px;
+  }
+  .title-line1 {
+    font-size: 20pt;
+  }
+  .title-line2 {
+    font-size: 16pt;
+  }
+  .korean-subtitle {
+    font-size: 11.5pt;
+    font-weight: 600;
+    color: #3a3a3a;
+    line-height: 1.55;
+    letter-spacing: -0.2px;
+    margin: 0;
+    padding-top: 14px;
+    border-top: 1px solid rgba(0,0,0,0.12);
+    max-width: 3in;
+  }
+
+  .left-footer {
+    margin-top: auto;
+    position: relative;
+    padding-top: 0.25in;
+  }
+  .schedule-gap {
+    margin: 16px 0 0;
+    font-size: 9.5pt;
+    font-weight: 500;
+    color: #6b6b6b;
+    letter-spacing: -0.1px;
+  }
+  .schedule-gap + .schedule-gap {
+    margin-top: 4px;
+  }
+  .schedule-gap a {
+    color: inherit;
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 2px;
+  }
+  .schedule-gap a:hover {
+    color: var(--green-mid);
+  }
+  .workshop-date {
+    margin-top: 36px;
+    font-size: 13pt;
+    font-weight: 800;
+    color: #1a1a1a;
+    letter-spacing: -0.3px;
+  }
+
+  .presenter {
+    margin-bottom: 48px;
+  }
+  .presenter-name {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13.5pt;
+    font-weight: 800;
+    color: #1a1a1a;
+    letter-spacing: -0.3px;
+    line-height: 1.2;
+  }
+  .linkedin-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 21px;
+    height: 21px;
+    border-radius: 4.5px;
+    background: #0a66c2;
+    color: #fff;
+    flex-shrink: 0;
+  }
+  .linkedin-badge svg {
+    width: 12px;
+    height: 12px;
+  }
+  .presenter-role {
+    margin-top: 5px;
+    font-size: 9.5pt;
+    font-weight: 600;
+    color: #4a4a4a;
+    letter-spacing: -0.15px;
+    line-height: 1.45;
+  }
+
+  .liner-mark {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .mentor-logo {
+    height: 40px;
+    width: auto;
+    display: block;
+  }
+  .liner-mark-text {
+    font-size: 8.5pt;
+    font-weight: 500;
+    color: #6b6b6b;
+    line-height: 1.3;
+    letter-spacing: 0.1px;
+  }
+  .liner-mark-text strong {
+    display: block;
+    font-weight: 600;
+    color: #4a4a4a;
+  }
+  .liner-logo {
+    height: 24px;
+    width: auto;
+    display: block;
+  }
+
+  /* ============== RIGHT — Curriculum table ============== */
+  .right {
+    padding: 0.55in 0.55in 0.45in 0.55in;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    background: #fff;
+    min-height: 0;
+  }
+  .right-header {
+    margin-bottom: 0.22in;
+  }
+  .right-title {
+    font-size: 21pt;
+    font-weight: 900;
+    color: #1a1a1a;
+    letter-spacing: -0.6px;
+    margin: 0;
+    line-height: 1.2;
+  }
+
+  .curriculum {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+  }
+  .curriculum thead th {
+    background: var(--igm-red);
+    color: #fff;
+    font-size: 12pt;
+    font-weight: 700;
+    padding: 10px 12px;
+    text-align: center;
+    letter-spacing: -0.2px;
+    border-right: 1px solid rgba(255,255,255,0.25);
+    line-height: 1.2;
+  }
+  .curriculum thead th:last-child { border-right: none; }
+
+  .curriculum tbody td {
+    padding: 8px 14px;
+    border-bottom: 1px solid var(--table-border);
+    vertical-align: middle;
+    font-size: 10pt;
+    line-height: 1.45;
+    color: var(--ink-soft);
+    background: #fff;
+  }
+  .curriculum tbody tr:last-child td {
+    border-bottom: 1.5px solid var(--igm-red);
+  }
+
+  .col-time {
+    width: 1.4in;
+    text-align: center;
+    font-weight: 600;
+    color: #1f1f1f;
+    font-size: 11.5pt;
+    letter-spacing: -0.1px;
+    font-variant-numeric: tabular-nums;
+  }
+  .col-topic {
+    text-align: left;
+    font-weight: 700;
+    color: #1a1a1a;
+    font-size: 11.5pt;
+    letter-spacing: -0.2px;
+    line-height: 1.45;
+  }
+  .col-mode {
+    width: 1.15in;
+    text-align: center;
+    font-weight: 600;
+    color: #2a2a2a;
+    font-size: 11pt;
+    letter-spacing: -0.1px;
+    white-space: nowrap;
+  }
+
+  /* Break / lunch rows */
+  .curriculum tbody tr.break-row td {
+    background: #f6f6f4;
+    color: #8a8a8a;
+    font-weight: 500;
+  }
+  .curriculum tbody tr.break-row .col-topic {
+    font-weight: 500;
+    color: #8a8a8a;
+  }
+  .curriculum tbody tr.break-row .col-mode {
+    color: #b5b5b3;
+  }
+  .curriculum tbody tr.break-row .col-time {
+    color: #8a8a8a;
+  }
+
+  .topic-num {
+    display: inline-block;
+    width: 22px;
+    color: #000;
+    font-weight: 800;
+    margin-right: 2px;
+  }
+
+  .topic-sub {
+    display: block;
+    font-size: 10.5pt;
+    font-weight: 500;
+    color: #5a5a5a;
+    margin-top: 2px;
+    letter-spacing: -0.1px;
+  }
+
+  .col-topic a {
+    color: var(--igm-red);
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 2px;
+    font-weight: 700;
+  }
+  .col-topic a:hover {
+    color: var(--green-mid);
+  }
+
+  .total-row {
+    margin-top: 12px;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 8px;
+  }
+  .total-label {
+    font-size: 9pt;
+    font-weight: 600;
+    color: #6b6b6b;
+    letter-spacing: 0.6px;
+    text-transform: uppercase;
+  }
+  .total-value {
+    font-size: 12pt;
+    font-weight: 800;
+    color: var(--igm-red);
+    letter-spacing: -0.3px;
+  }
+  .total-note {
+    font-size: 9.5pt;
+    font-weight: 600;
+    color: #6b6b6b;
+    letter-spacing: -0.1px;
+    margin-left: 4px;
+  }
+
+  .homework-row {
+    margin-top: 14px;
+    font-size: 10pt;
+    color: #2a2a2a;
+    line-height: 1.45;
+    letter-spacing: -0.1px;
+  }
+  .homework-label {
+    font-weight: 700;
+    color: #1a1a1a;
+  }
+
+  /* ============== Preparation slide (사전 준비사항) ============== */
+  .slide.preparation .right {
+    justify-content: flex-start;
+    overflow: visible;
+  }
+
+  .requirements-list {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .requirements-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 16px 0;
+    border-bottom: 1px solid var(--table-border);
+    font-size: 12pt;
+    line-height: 1.45;
+    color: var(--ink-soft);
+  }
+  .requirements-list li:last-child {
+    border-bottom: none;
+  }
+
+  .requirement-num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 30px;
+    height: 22px;
+    padding: 0 9px;
+    border-radius: 999px;
+    background: var(--igm-red);
+    color: #fff;
+    font-size: 10.5pt;
+    font-weight: 800;
+    letter-spacing: -0.2px;
+    margin-top: 3px;
+    flex-shrink: 0;
+  }
+
+  .requirement-item {
+    flex: 1;
+  }
+  .requirement-title {
+    font-weight: 700;
+    color: #1a1a1a;
+    margin: 0 0 2px;
+    letter-spacing: -0.2px;
+  }
+  .requirement-desc {
+    font-size: 10.5pt;
+    color: #2a2a2a;
+    line-height: 1.4;
+    letter-spacing: -0.1px;
+  }
+  .requirement-desc a {
+    color: var(--igm-red);
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 2px;
+  }
+  .requirement-desc a:hover {
+    color: var(--green-mid);
+  }
+  .requirement-category {
+    font-size: 10pt;
+    font-weight: 800;
+    color: var(--igm-red);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin: 14px 0 8px 0;
+  }
+  .claude-desktop-demo {
+    max-width: 200px;
+    height: auto;
+    margin: 6px 0 0 0;
+    display: block;
+    border: 1px solid #000000;
+  }
+
+  .page-num {
+    position: absolute;
+    right: 0.42in;
+    bottom: 0.32in;
+    font-size: 9.5pt;
+    font-weight: 700;
+    color: #9a9a9a;
+    letter-spacing: 0.3px;
+    font-variant-numeric: tabular-nums;
+    z-index: 5;
+  }
+  .page-num b { color: var(--green-to); font-weight: 800; }
+
+  /* ===== Differentiation comparison (page 1) ===== */
+  .content-title {
+    font-size: 20pt;
+    font-weight: 800;
+    color: #1a1a1a;
+    letter-spacing: -0.3px;
+    margin: 0 0 6px;
+  }
+  .compare {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    table-layout: fixed;
+  }
+  .compare th, .compare td {
+    padding: 11px 16px;
+    vertical-align: middle;
+    line-height: 1.4;
+  }
+  .compare tbody td { padding-top: 14px; padding-bottom: 14px; }
+  .compare thead th {
+    font-size: 11.5pt;
+    font-weight: 800;
+    letter-spacing: -0.2px;
+    text-align: center;
+    color: #fff;
+  }
+  .compare thead .c-dim { background: #1f1f1f; color: #fff; border-top-left-radius: 9px; border-right: 1px solid rgba(255,255,255,0.18); }
+  .compare thead .c-generic { background: #45474e; color: #fff; }
+  .compare thead .c-ours {
+    background: var(--green-grad);
+    color: #fff;
+    border-top-right-radius: 9px;
+  }
+  .compare tbody td { border-bottom: 1px solid var(--table-border); }
+  .compare tbody tr:last-child td { border-bottom: none; }
+  .compare .c-dim {
+    width: 1.25in;
+    text-align: center;
+    font-weight: 800;
+    font-size: 10.5pt;
+    color: #1a1a1a;
+    background: #f2f2f0;
+  }
+  .compare tbody .c-dim { border-right: 1px solid var(--table-border); }
+  .compare .c-generic {
+    width: calc((100% - 1.25in) / 2);
+    font-size: 10.5pt;
+    color: #4a4d54;
+    background: #f4f4f3;
+    letter-spacing: -0.1px;
+  }
+  .compare .c-ours {
+    width: calc((100% - 1.25in) / 2);
+    font-size: 10.5pt;
+    color: #16181d;
+    font-weight: 600;
+    background: rgba(0,88,138,0.07);
+    border-left: 2px solid var(--green-to);
+    letter-spacing: -0.1px;
+  }
+  .compare .c-ours strong { color: var(--green-to); font-weight: 800; }
+  .c-lead { display: block; font-weight: 700; color: #16181d; margin-bottom: 5px; }
+  .c-pts { margin: 0; padding: 0; list-style: none; }
+  .c-pts.grid2 { display: grid; grid-template-columns: 1fr 1fr; column-gap: 14px; row-gap: 1px; }
+  .c-pts li {
+    position: relative;
+    padding-left: 13px;
+    font-weight: 600;
+    color: #16181d;
+    font-size: 9.5pt;
+    line-height: 1.5;
+  }
+  .c-pts li::before {
+    content: "";
+    position: absolute;
+    left: 2px;
+    top: 0.6em;
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: var(--green-to);
+  }
+  .compare tbody tr:last-child .c-dim { border-bottom-left-radius: 9px; }
+  .compare tbody tr:last-child .c-ours { border-bottom-right-radius: 9px; }
+  .compare-takeaway {
+    margin: 14px 0 0;
+    padding: 12px 16px;
+    background: var(--green-grad);
+    border-radius: 9px;
+    color: #fff;
+    font-size: 11pt;
+    font-weight: 700;
+    letter-spacing: -0.2px;
+    line-height: 1.45;
+    text-align: center;
+  }
+  .compare-takeaway strong { font-weight: 900; }
+
+  /* ============== AX 사례 페이지 (posco-ax 원본 양식 그대로, 스코프) ============== */
+  .slide.ax-skills {
+    --posco-blue: #00588a;
+    --posco-blue-deep: #013d61;
+    --posco-blue-light: #0a73af;
+    --blue-grad: linear-gradient(135deg, #0a73af 0%, #00588a 52%, #013d61 100%);
+    --ink: #16181d;
+    --ink-soft: #2a2d33;
+    --muted: #6b6f76;
+    --table-border: #dadce0;
+    --zebra: #f5f8fb;
+    line-height: 1.5;
+  }
+  .slide.ax-skills .top-bar { background: var(--posco-blue); }
+  .slide.ax-skills .top-bar .accent-dark { background: #1f2329; }
+
+  .slide.ax-skills .head {
+    padding: 0.42in 0.6in 0.18in 0.6in;
+    flex-shrink: 0;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 24px;
+  }
+  .slide.ax-skills .head-left { min-width: 0; }
+  .slide.ax-skills .client-logo { height: 26px; width: auto; display: block; margin: 0 0 12px; }
+  .slide.ax-skills .eyebrow {
+    font-size: 10.5pt;
+    font-weight: 800;
+    color: var(--posco-blue);
+    letter-spacing: 0.4px;
+    margin: 0 0 5px;
+    line-height: 1.3;
+  }
+  .slide.ax-skills .head-title {
+    font-size: 25pt;
+    font-weight: 900;
+    color: var(--ink);
+    letter-spacing: -0.8px;
+    line-height: 1.05;
+    margin: 0;
+  }
+  .slide.ax-skills .head-sub {
+    font-size: 11pt;
+    font-weight: 500;
+    color: var(--muted);
+    letter-spacing: -0.2px;
+    margin: 8px 0 0;
+  }
+  .slide.ax-skills .head-right { text-align: right; flex-shrink: 0; }
+  .slide.ax-skills .count-pill {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 1px;
+    padding: 9px 20px;
+    border-radius: 999px;
+    background: var(--blue-grad);
+    color: #fff;
+  }
+  .slide.ax-skills .count-pill b { font-size: 13pt; font-weight: 900; letter-spacing: -0.3px; }
+  .slide.ax-skills .count-pill span { font-size: 13pt; font-weight: 800; letter-spacing: -0.2px; }
+
+  .slide.ax-skills .table-wrap {
+    flex: 1;
+    padding: 0.06in 0.6in 0.5in 0.6in;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+  }
+  .slide.ax-skills table.skills {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    table-layout: fixed;
+  }
+  .slide.ax-skills table.skills thead th {
+    background: var(--posco-blue);
+    color: #fff;
+    font-size: 10.5pt;
+    font-weight: 700;
+    padding: 8px 14px;
+    text-align: center;
+    vertical-align: middle;
+    letter-spacing: -0.1px;
+    border-right: 1px solid rgba(255,255,255,0.2);
+    line-height: 1.2;
+  }
+  .slide.ax-skills table.skills thead th:last-child { border-right: none; }
+  .slide.ax-skills table.skills thead th:first-child { border-top-left-radius: 8px; }
+  .slide.ax-skills table.skills thead th:last-of-type { border-top-right-radius: 8px; }
+  .slide.ax-skills table.skills tbody td {
+    padding: 6.5px 14px;
+    border-bottom: 1px solid var(--table-border);
+    vertical-align: top;
+    font-size: 9.5pt;
+    line-height: 1.42;
+    color: var(--ink-soft);
+  }
+  .slide.ax-skills table.skills tbody tr:nth-child(even) td { background: var(--zebra); }
+  .slide.ax-skills table.skills tbody tr.row-hl td { background: rgba(200,42,42,0.09); }
+  .slide.ax-skills table.skills tbody tr:last-child td { border-bottom: 2px solid var(--posco-blue); }
+
+  .slide.ax-skills .col-no    { width: 0.42in; text-align: center; }
+  .slide.ax-skills .col-name  { width: 0.9in; }
+  .slide.ax-skills .col-skill { width: 2.75in; }
+  .slide.ax-skills .col-desc  { width: auto; }
+  .slide.ax-skills .col-link  { width: 0.92in; text-align: center; }
+
+  .slide.ax-skills .cell-no {
+    text-align: center;
+    font-weight: 800;
+    color: var(--posco-blue);
+    font-size: 10.5pt;
+    font-variant-numeric: tabular-nums;
+  }
+  .slide.ax-skills .cell-name { text-align: center; font-weight: 700; color: var(--ink); font-size: 10pt; letter-spacing: -0.2px; }
+  .slide.ax-skills .cell-skill { font-weight: 800; color: var(--posco-blue-deep); font-size: 9pt; letter-spacing: -0.2px; white-space: nowrap; }
+  .slide.ax-skills .cell-skill .skill-ko { display: block; font-size: 8.5pt; font-weight: 600; color: var(--muted); margin-top: 1px; letter-spacing: -0.1px; }
+  .slide.ax-skills .cell-desc { color: var(--ink-soft); letter-spacing: -0.1px; }
+
+  .slide.ax-skills .gh-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 10px;
+    border-radius: 6px;
+    border: 1px solid var(--table-border);
+    background: #fff;
+    font-size: 8.5pt;
+    font-weight: 700;
+    color: var(--posco-blue);
+    letter-spacing: 0;
+    white-space: nowrap;
+  }
+  .slide.ax-skills .gh-link:hover { background: var(--posco-blue); color: #fff; border-color: var(--posco-blue); }
+  .slide.ax-skills .gh-link svg { width: 12px; height: 12px; flex-shrink: 0; }
+
+  .slide.ax-skills .foot {
+    margin-top: auto;
+    padding-top: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    font-size: 9pt;
+    font-weight: 500;
+    color: var(--muted);
+    letter-spacing: -0.1px;
+  }
+  .slide.ax-skills .foot .legend { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+  .slide.ax-skills .foot .legend span {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 140px;
+    gap: 6px;
+    padding: 4px 13px;
+    border-radius: 999px;
+    background: #eef4f9;
+    border: 1px solid #d7e4ef;
+    font-size: 9pt;
+    font-weight: 600;
+    color: #3a4a57;
+    letter-spacing: -0.1px;
+  }
+  .slide.ax-skills .foot .legend b { color: var(--posco-blue); font-weight: 800; }
+  .slide.ax-skills .foot .brand { font-weight: 700; color: #4a4d54; }
+  .slide.ax-skills .page-num b { color: var(--posco-blue); }
+/* ============== 프로필 2장 (원본 CSS를 .slide.profile 로 스코프) ============== */
+  /* 이 덱의 .left / .right 규칙이 새어 들어오는 자리를 막는다 */
+  .slide.profile .left::before { content: none; }
+.slide.profile .right { justify-content: flex-start; }
+.slide.profile {
+    --accent: #16265e;
+    --accent-deep: #0b1330;
+    --accent-soft: rgba(22, 38, 94, 0.06);
+    --accent-border: rgba(22, 38, 94, 0.22);
+    --rule: #16265e;
+    --ink: #181818;
+    --ink-soft: #2a2a2a;
+    --muted: #6b6b6b;
+    --meta: #8b8b85;
+    --hairline: #e6e6e3;
+    --card-bg: #f6f6f3;
+    --page-bg: #e8e8e6;
+    --link: #16265e;
+    --divider: #e0e0dc;
+  
+    word-break: keep-all;
+    overflow-wrap: break-word;
+  }
+.slide.profile a {
+    color: var(--link);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    text-decoration-thickness: 1px;
+    font-weight: 600;
+  }
+.slide.profile /* ============== Split layout: Left sidebar | Right main ============== */
+  .split {
+    display: grid;
+    grid-template-columns: 4.5in 1fr;
+    flex: 1;
+    min-height: 0;
+  }
+.slide.profile .split.split-even {
+    grid-template-columns: 1fr 1fr;
+    position: relative;
+  }
+.slide.profile .split.split-even .left {
+    background: var(--card-bg);
+    padding: 0.85in 0.45in 0.5in 0.55in;
+  }
+.slide.profile .split.split-even .right {
+    padding: 0.85in 0.55in 0.45in 0.45in;
+  }
+.slide.profile /* Center divider aligns with the first section-title baseline */
+  .split.split-even::after {
+    content: "";
+    position: absolute;
+    top: 0.85in;
+    bottom: 0;
+    left: 50%;
+    width: 1px;
+    background: var(--divider);
+    transform: translateX(-0.5px);
+    pointer-events: none;
+  }
+.slide.profile /* Running head (slide 2): identity left,
+  .slide.profile scope label right */
+  .running-head {
+    position: absolute;
+    top: 0.4in;
+    left: 0.55in;
+    right: 0.55in;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+  }
+.slide.profile .rh-name {
+    font-size: 8.5pt;
+    font-weight: 700;
+    color: var(--meta);
+    letter-spacing: 0.2px;
+  }
+.slide.profile .rh-role {
+    font-size: 8.5pt;
+    font-weight: 400;
+    color: var(--meta);
+    letter-spacing: 0.2px;
+  }
+.slide.profile .selective-label {
+    padding: 5px 0 4px;
+    border-top: 1.5px solid var(--accent);
+    border-bottom: 1.5px solid var(--accent);
+    font-size: 9pt;
+    font-weight: 800;
+    color: var(--accent);
+    letter-spacing: 1.8px;
+    text-transform: uppercase;
+    flex-shrink: 0;
+    line-height: 1.1;
+  }
+.slide.profile .left {
+    background: #fff;
+    padding: 0.5in 0.45in 0.45in;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+.slide.profile .right {
+    padding: 0.5in 0.55in 0.45in;
+    display: flex;
+    flex-direction: column;
+    gap: 26px;
+    min-height: 0;
+  }
+.slide.profile .split:not(.split-even) > .right { justify-content: space-between; }
+.slide.profile /* Photo top edge sits on the same line as the 경력 rule opposite it:
+     logo (22px) + this gap = the section-title block height. */
+  .split:not(.split-even) > .left { gap: 0; }
+.slide.profile .left > .brand-mark { margin-bottom: 16px; }
+.slide.profile .left > .photo-frame { margin-bottom: 22px; }
+.slide.profile .left > .now-card { margin-top: auto; }
+.slide.profile /* Slide 1 right column: bump bullet body size by 1pt (경력/사외이사/학력) */
+  .split:not(.split-even) > .right > .section ul.bullets li {
+    font-size: 11pt;
+  }
+.slide.profile /* Brand mark in left */
+  .brand-mark {
+    display: flex;
+    align-items: center;
+  }
+.slide.profile .brand-mark img { height: 22px; width: auto; display: block; }
+.slide.profile /* Profile area (slide 1 left) — editorial portrait treatment */
+  .photo-frame {
+    position: relative;
+    width: 100%;
+    height: 2.8in;
+    border-radius: 8px;
+    overflow: hidden;
+    background: var(--accent);
+    box-shadow:
+      0 1px 2px rgba(0, 0, 0, 0.05),
+      0 14px 32px -10px rgba(22, 38, 94, 0.22),
+      inset 0 0 0 1px rgba(22, 38, 94, 0.18);
+    isolation: isolate;
+  }
+.slide.profile .photo {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: cover;
+    object-position: 55% 14%;
+    filter: grayscale(0.18) contrast(1.07) brightness(1.02) saturate(0.92);
+    image-rendering: -webkit-optimize-contrast;
+  }
+.slide.profile .photo-frame::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse at 50% 32%, rgba(0,0,0,0) 55%, rgba(0,0,0,0.14) 100%),
+      linear-gradient(180deg, rgba(0,0,0,0) 65%, rgba(22, 38, 94, 0.18) 100%);
+    pointer-events: none;
+    mix-blend-mode: multiply;
+  }
+.slide.profile .name-row {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+.slide.profile .name {
+    font-size: 23pt;
+    font-weight: 800;
+    color: var(--accent);
+    letter-spacing: -0.5px;
+    line-height: 1.1;
+  }
+.slide.profile .name-en {
+    font-size: 15pt;
+    font-weight: 600;
+    color: var(--muted);
+    letter-spacing: -0.3px;
+  }
+.slide.profile .tagline {
+    font-size: 10pt;
+    font-weight: 500;
+    color: var(--muted);
+    letter-spacing: -0.1px;
+    line-height: 1.4;
+  }
+.slide.profile /* Current roles — emphasis by rule and type,
+  .slide.profile not by a filled block */
+  .now-card li { margin: 5px 0; line-height: 1.45; }
+.slide.profile .edu-en { font-size: 0.82em; color: var(--muted); letter-spacing: -0.2px; }
+.slide.profile .now-org {
+    font-size: 11.5pt;
+    font-weight: 800;
+    color: var(--accent);
+    letter-spacing: -0.4px;
+  }
+.slide.profile .now-org a {
+    color: var(--accent);
+    font-weight: 800;
+    text-decoration: none;
+  }
+.slide.profile .now-org-en {
+    font-size: 9.5pt;
+    font-weight: 600;
+    color: var(--muted);
+    letter-spacing: 0;
+  }
+.slide.profile .now-role {
+    font-size: 9.5pt;
+    color: var(--ink-soft);
+    letter-spacing: -0.2px;
+  }
+.slide.profile /* Section (right side) */
+  .section + .section { margin-top: 4px; }
+.slide.profile .section-title {
+    font-size: 15pt;
+    font-weight: 900;
+    color: var(--accent);
+    margin: 0 0 8px;
+    padding: 0 0 5px;
+    border-bottom: 2px solid var(--accent);
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    letter-spacing: -0.3px;
+  }
+.slide.profile .title-en {
+    font-size: 8.5pt;
+    font-weight: 500;
+    color: var(--meta);
+    letter-spacing: 0.6px;
+    text-transform: uppercase;
+    position: relative;
+    top: -1px;
+  }
+.slide.profile ul.bullets {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+.slide.profile ul.bullets li {
+    position: relative;
+    padding-left: 14px;
+    margin: 4px 0;
+    font-size: 10pt;
+    line-height: 1.6;
+    color: #2a2a2a;
+  }
+.slide.profile ul.bullets li::before {
+    content: "•";
+    position: absolute;
+    left: 0;
+    top: 0;
+    color: var(--accent);
+    font-weight: 700;
+  }
+.slide.profile /* News */
+  .news-group { margin: 0; }
+.slide.profile .news-group + .news-group {
+    margin-top: 18px;
+    padding-top: 18px;
+    border-top: 1px solid var(--divider);
+  }
+.slide.profile .news-title {
+    font-size: 10.5pt;
+    font-weight: 700;
+    color: var(--accent);
+    margin: 0 0 8px;
+  }
+.slide.profile .news-group ul.bullets li {
+    font-size: 10pt;
+    line-height: 1.55;
+    margin: 5px 0;
+  }
+.slide.profile /* Article titles are the links; a small mark carries the affordance
+     so the column edge stays quiet instead of a stack of (링크). */
+  .ext {
+    color: var(--ink-soft) !important;
+    font-weight: 500;
+    text-decoration: none;
+  }
+.slide.profile .ext::after {
+    content: "↗";
+    margin-left: 3px;
+    font-size: 0.76em;
+    color: var(--accent);
+    vertical-align: 1px;
+  }
+.slide.profile .ext:hover { text-decoration: underline; text-decoration-color: var(--accent-border); }
+.slide.profile /* Right column scroll/flex */
+  .right-stack { display: flex; flex-direction: column; gap: 22px; flex: 1; min-height: 0; }
+
+/* ============== 포스코 표지 ============== */
+.slide.cover { background: #fff; }
+.slide.cover .cover-inner {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  padding: 0.62in 1.05in 0.55in;
+}
+.slide.cover .cover-body {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.slide.cover .cover-logo {
+  height: 52px;
+  width: auto;
+  display: block;
+  align-self: flex-start;
+  flex: 0 0 auto;
+  margin: 0 0 0.5in;
+}
+.slide.cover .cover-eyebrow {
+  align-self: flex-start;
+  font-size: 13pt;
+  font-weight: 800;
+  color: var(--igm-red);
+  letter-spacing: 1.2px;
+  padding: 5px 0;
+  border-top: 1.5px solid var(--igm-red);
+  border-bottom: 1.5px solid var(--igm-red);
+  margin: 0 0 26px;
+}
+.slide.cover .cover-title {
+  font-size: 38pt;
+  font-weight: 900;
+  line-height: 1.18;
+  letter-spacing: -1.1px;
+  color: #14203f;
+  margin: 0;
+}
+.slide.cover .cover-title em { font-style: normal; color: var(--green-mid); }
+.slide.cover .cover-sub {
+  margin: 24px 0 0;
+  font-size: 13.5pt;
+  font-weight: 500;
+  color: #5a6270;
+  letter-spacing: -0.3px;
+}
+.slide.cover .cover-foot {
+  flex-shrink: 0;
+  padding-top: 20px;
+  border-top: 1px solid var(--table-border);
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+}
+.slide.cover .cover-presenter-name {
+  font-size: 12.5pt;
+  font-weight: 800;
+  color: #1a1a1a;
+  letter-spacing: -0.3px;
+}
+.slide.cover .cover-presenter-role {
+  margin-top: 5px;
+  font-size: 9.5pt;
+  font-weight: 500;
+  color: #6b7280;
+  letter-spacing: -0.15px;
+}
+.slide.cover .cover-liner { height: 24px; width: auto; display: block; }
+.slide.cover .cover-partner-logos {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.slide.cover .cover-mentor { height: 40px; width: auto; display: block; }
+
+/* ============== 끝장 ============== */
+.slide.closing { background: #fff; }
+.slide.closing .cover-inner {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  padding: 0.62in 1.05in 0.55in;
+}
+.slide.closing .closing-body {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.slide.closing .cover-eyebrow {
+  align-self: flex-start;
+  font-size: 13pt;
+  font-weight: 800;
+  color: var(--igm-red);
+  letter-spacing: 1.2px;
+  padding: 5px 0;
+  border-top: 1.5px solid var(--igm-red);
+  border-bottom: 1.5px solid var(--igm-red);
+  margin: 0 0 26px;
+}
+.slide.closing .closing-title {
+  font-size: 46pt;
+  font-weight: 900;
+  letter-spacing: -1.6px;
+  line-height: 1.1;
+  color: #14203f;
+  margin: 0;
+}
+.slide.closing .closing-links {
+  margin: 0.5in 0 0;
+  padding: 0;
+  list-style: none;
+  max-width: 5.2in;
+}
+.slide.closing .closing-links li {
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+  padding: 11px 0;
+  border-bottom: 1px solid var(--table-border);
+  font-size: 11pt;
+}
+.slide.closing .closing-links li:first-child { border-top: 1px solid var(--table-border); }
+.slide.closing .closing-links span {
+  width: 1.3in;
+  flex-shrink: 0;
+  font-weight: 700;
+  color: var(--igm-red);
+  letter-spacing: -0.2px;
+}
+.slide.closing .closing-links a {
+  font-weight: 600;
+  color: #2a2f3a;
+  letter-spacing: -0.1px;
+}
+.slide.closing .closing-links a:hover { color: var(--green-mid); }
+.slide.closing .cover-foot {
+  flex-shrink: 0;
+  padding-top: 20px;
+  border-top: 1px solid var(--table-border);
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+}
+.slide.closing .cover-presenter-name {
+  font-size: 12.5pt;
+  font-weight: 800;
+  color: #1a1a1a;
+  letter-spacing: -0.3px;
+}
+.slide.closing .cover-presenter-role {
+  margin-top: 5px;
+  font-size: 9.5pt;
+  font-weight: 500;
+  color: #6b7280;
+  letter-spacing: -0.15px;
+}
+.slide.closing .cover-liner { height: 24px; width: auto; display: block; }
+.slide.closing .cover-partner-logos {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.slide.closing .cover-mentor { height: 40px; width: auto; display: block; }
+
+/* ============== 포스코 과정 차별점 ============== */
+.slide.wide .wide-body {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  padding: 0.5in 0.7in 0.42in;
+}
+.slide.wide .wide-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding-bottom: 14px;
+  border-bottom: 2px solid var(--igm-red);
+  margin-bottom: 6px;
+}
+.slide.wide .wide-logo { height: 30px; width: auto; display: block; flex-shrink: 0; }
+.slide.wide .wide-title-pre { color: var(--igm-red); }
+.slide.wide .wide-title {
+  font-size: 22pt;
+  font-weight: 900;
+  color: #14203f;
+  letter-spacing: -0.7px;
+  line-height: 1.15;
+  margin: 0;
+}
+.slide.wide .diff-list {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.slide.wide .diff-list li {
+  display: flex;
+  align-items: flex-start;
+  gap: 13px;
+  padding: 16px 0;
+  border-bottom: 1px solid var(--table-border);
+}
+.slide.wide .diff-list li:last-child { border-bottom: none; }
+.slide.wide .diff-num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 22px;
+  flex-shrink: 0;
+  margin-top: 2px;
+  border-radius: 999px;
+  background: var(--igm-red);
+  color: #fff;
+  font-size: 9.5pt;
+  font-weight: 800;
+}
+.slide.wide .diff-lead {
+  margin: 0;
+  font-size: 13.5pt;
+  font-weight: 800;
+  color: var(--igm-red);
+  letter-spacing: -0.3px;
+  line-height: 1.35;
+}
+.slide.wide .diff-desc {
+  margin: 4px 0 0;
+  font-size: 10pt;
+  font-weight: 500;
+  color: #3a4049;
+  letter-spacing: -0.15px;
+  line-height: 1.5;
+}
+.slide.wide .diff-desc strong { font-weight: 800; color: #14203f; }
+.slide.wide .diff-desc a {
+  color: var(--igm-red);
+  font-weight: 700;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 2px;
+}
+.slide.wide .proof {
+  margin-top: auto;
+  padding-top: 14px;
+  border-top: 1px solid var(--table-border);
+}
+.slide.wide .proof-label {
+  font-size: 10.5pt;
+  font-weight: 800;
+  color: var(--igm-red);
+  letter-spacing: -0.2px;
+  margin: 0 0 12px;
+}
+.slide.wide .proof-logos {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+}
+.slide.wide .proof-logos img {
+  width: auto;
+  flex-shrink: 0;
+  object-fit: contain;
+}
+.slide.wide .neac-logo-crop {
+  position: relative;
+  display: block;
+  width: 129px;
+  height: 30px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.slide.wide .neac-logo-crop img {
+  position: absolute;
+  height: 33px;
+  max-width: none;
+  left: -89px;
+  top: -3px;
+}
+
+/* ============== 자기소개 질문 페이지 ============== */
+.slide.self-intro {
+  background: #fff;
+}
+.slide.self-intro .self-intro-inner {
+  height: 100%;
+  padding: 0.54in 0.62in 0.5in 0.46in;
+}
+.slide.self-intro .self-intro-bar {
+  width: 0.92in;
+  height: 8px;
+  background: #242424;
+  margin-bottom: 0.12in;
+}
+.slide.self-intro .self-intro-title {
+  display: flex;
+  align-items: baseline;
+  gap: 0.34in;
+  margin: 0;
+  color: #000;
+  white-space: nowrap;
+  letter-spacing: -1.7px;
+  line-height: 1.15;
+}
+.slide.self-intro .self-intro-title-main {
+  font-size: 34pt;
+  font-weight: 900;
+}
+.slide.self-intro .self-intro-title-note {
+  font-size: 23pt;
+  font-weight: 900;
+  letter-spacing: -1.2px;
+}
+.slide.self-intro .self-intro-list {
+  margin: 1.05in 0 0;
+  padding-left: 0.38in;
+  color: #000;
+  font-size: 22pt;
+  font-weight: 500;
+  line-height: 1.36;
+  letter-spacing: -1px;
+}
+.slide.self-intro .self-intro-list li {
+  padding-left: 0.02in;
+}
+.slide.self-intro .self-intro-list li + li {
+  margin-top: 0.44in;
+}
+</style>
+</head>
+<body>
+
+<section class="slide cover">
+
+  <div class="top-bar"><div class="accent-dark"></div></div>
+
+  <div class="cover-inner">
+
+    <div class="cover-body">
+      <img src="assets/posco.svg" alt="포스코" class="cover-logo">
+      <div class="cover-eyebrow">AX 워크샵 2일 과정 제안서</div>
+      <h1 class="cover-title">비즈니스 리더를 위한<br><em>'하네스 엔지니어링'</em> 실전 워크샵</h1>
+      <p class="cover-sub">포스코를 위한 2일 과정 · 에이전트 구축을 넘어, 업무 방식을 재설계합니다</p>
+    </div>
+
+    <div class="cover-foot">
+      <div>
+        <div class="cover-presenter-name">강정구 · Jayden Kang</div>
+        <div class="cover-presenter-role">라이너(Liner) · AI 전략 총괄, 국민경제자문회의 · AI경제 정책자문단</div>
+      </div>
+      <div class="cover-partner-logos">
+        <img src="assets/라이너.png" alt="Liner" class="cover-liner">
+        <img src="assets/client_logo3.png" alt="멘토 라이브러리" class="cover-mentor">
+      </div>
+    </div>
+
+  </div>
+
+</section>
+
+<section class="slide wide">
+
+  <div class="top-bar"><div class="accent-dark"></div></div>
+
+  <div class="wide-body">
+
+    <div class="wide-head">
+      <h2 class="wide-title"><span class="wide-title-pre">AX 2일 워크샵 ·</span> 본 과정의 차별점</h2>
+      <img src="assets/posco.svg" alt="포스코" class="wide-logo">
+    </div>
+
+    <ul class="diff-list">
+      <li>
+        <span class="diff-num">Q1</span>
+        <div>
+          <p class="diff-lead">이틀로 충분한가?</p>
+          <p class="diff-desc">비즈니스 리더에게 부족한 것은 학습 시간 자체가 아니라 방해받지 않고 몰입할 수 있는 시간입니다. 3주나 5주로 나누면 회차마다 다시 몰입해야 하고, 일정에 밀려 빠지는 회차가 생깁니다. <strong>이틀은 분량을 줄인 것이 아니라 한 번에 몰입할 수 있는 최소 단위입니다.</strong> 1일차와 2일차 사이에 개별 과제를 두어, 배운 것을 현업에 적용할 시간을 따로 확보합니다.</p>
+        </div>
+      </li>
+      <li>
+        <span class="diff-num">Q2</span>
+        <div>
+          <p class="diff-lead">실습 과제는 업무에 충분히 연결되는가?</p>
+          <p class="diff-desc">실습 주제는 시장 · 트렌드 분석, 분석 보고서, 대시보드 등 입니다. 각자 맡고 있는 현업 과제를 그대로 가져와 만들고, 1일차와 2일차 사이에는 실제로 자동화하고 싶은 업무를 골라 스킬로 완성합니다. <strong>시연용 데모가 아니라 바로 쓸 수 있는 에이전트를 만드는 것을 목표로 합니다.</strong> 지난 기수 참가자들이 만든 결과물은 <a href="https://airoasting.com/showcase-skills.html" target="_blank" rel="noopener">산출물 사례</a>에서 보실 수 있습니다.</p>
+        </div>
+      </li>
+      <li>
+        <span class="diff-num">Q3</span>
+        <div>
+          <p class="diff-lead">경쟁력 있는 강사인가?</p>
+          <p class="diff-desc">강정구 강사는 <strong>라이너 AI 전략 총괄이자 국민경제자문회의 AI경제 정책자문단 위원</strong>입니다. 매주 직접 활용하고 분석한 최신 동향을 워크샵에 반영하고 있습니다.</p>
+        </div>
+      </li>
+      <li>
+        <span class="diff-num">Q4</span>
+        <div>
+          <p class="diff-lead">강의 교재는 충실한가?</p>
+          <p class="diff-desc">공개 자료를 모아 놓은 범용 가이드가 아닙니다. 이 과정을 위해 직접 쓰고 고쳐 온 <a href="https://airoasting.com" target="_blank" rel="noopener">비즈니스 리더를 위한 Claude 완전 정복</a>을 교재로 제공합니다. <strong>워크샵이 끝난 뒤에도 계속 참고하여 학습하실 수 있습니다.</strong></p>
+        </div>
+      </li>
+      <li>
+        <span class="diff-num">Q5</span>
+        <div>
+          <p class="diff-lead">다양한 조직에서 검증된 방법론인가?</p>
+          <p class="diff-desc">국내 선도 기업·기관 대상 워크샵을 진행하며 방법론을 고도화해 왔습니다. <a href="https://airoasting.com/ai-levels.html" target="_blank" rel="noopener">AI 활용 5단계 진단</a>으로 시작해 <a href="https://airoasting.com/multi-persona.html" target="_blank" rel="noopener">멀티 페르소나</a>와 <a href="https://5color.airoasting.com/" target="_blank" rel="noopener">5-Color Harness</a>를 거쳐 <a href="https://airoasting.com/harness-engineering.html" target="_blank" rel="noopener">하네스</a> · <a href="https://airoasting.com/loop-engineering.html" target="_blank" rel="noopener">루프 엔지니어링</a>까지 하나로 이어집니다. <strong>방법론 자체는 특정 모델에 매이지 않아, ChatGPT를 쓰는 조직에도 그대로 적용됩니다.</strong></p>
+        </div>
+      </li>
+    </ul>
+
+    <div class="proof">
+      <p class="proof-label">워크샵 고객사 (Selective)</p>
+      <div class="proof-logos">
+        <img src="assets/posco.svg" alt="포스코" style="height:25px">
+        <img src="assets/LG전자.png" alt="LG전자" style="height:30px">
+        <img src="assets/롯데미래전략연구소.png" alt="롯데미래전략연구소" style="height:34px">
+        <img src="assets/신한벤처투자.png" alt="신한벤처투자" style="height:26px">
+        <img src="assets/프리미어파트너스.png" alt="프리미어파트너스" style="height:40px">
+        <img src="assets/조선일보.png" alt="조선일보" style="height:32px">
+        <span class="neac-logo-crop"><img src="assets/국민경제자문회의.svg" alt="국민경제자문회의"></span>
+        <img src="assets/고려대.png" alt="고려대학교" style="height:34px">
+      </div>
+    </div>
+
+  </div>
+
+</section>
+
+
+<section class="slide">
+
+  <div class="top-bar">
+    <div class="accent-dark"></div>
+  </div>
+
+  <div class="main">
+
+    <!-- LEFT: Title block -->
+    <aside class="left">
+      <div class="left-content">
+        <img src="assets/posco.svg" alt="포스코" class="client-logo">
+        <div class="eyebrow">AX 교육 · 1일차 · 8월 14일 (금)</div>
+        <h1 class="english-title"><span class="title-line1">AI 에이전트를 고용하라</span><br><span class="title-line2">하네스 엔지니어링 실전 워크샵</span></h1>
+        <p class="korean-subtitle">Day 1, AI 트렌드부터<br>에이전트화 대상 업무 설정까지</p>
+      </div>
+      <div class="left-footer">
+        <div class="liner-mark">
+          <img src="assets/라이너.png" alt="Liner" class="liner-logo">
+          <img src="assets/client_logo3.png" alt="멘토 라이브러리" class="mentor-logo">
+        </div>
+      </div>
+    </aside>
+
+    <!-- RIGHT: Curriculum -->
+    <main class="right">
+      <div class="right-header">
+        <h2 class="right-title">Day 1. AI 에이전트 고용 기초</h2>
+      </div>
+
+      <table class="curriculum">
+        <thead>
+          <tr>
+            <th class="col-time">시간</th>
+            <th class="col-topic" style="text-align:left;">주제</th>
+            <th class="col-mode">방식</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="col-time">09:00 – 09:50</td>
+            <td class="col-topic"><span class="topic-num">1.</span><a href="https://airoasting.com/ai-levels.html" target="_blank" rel="noopener">AI 활용 5단계 진단</a> 및 <a href="https://airoasting.com/multi-persona.html" target="_blank" rel="noopener">멀티 페르소나 실습</a> · <a href="https://5color.vercel.app/" target="_blank" rel="noopener">5-Color 방법론</a> 활용</td>
+            <td class="col-mode">실습</td>
+          </tr>
+          <tr class="break-row">
+            <td class="col-time">09:50 – 10:00</td>
+            <td class="col-topic">휴식</td>
+            <td class="col-mode"></td>
+          </tr>
+          <tr>
+            <td class="col-time">10:00 – 10:50</td>
+            <td class="col-topic"><span class="topic-num">2.</span><a href="https://airoasting.com/claude-code-101.html" target="_blank" rel="noopener">클로드 코드</a>를 활용한 <a href="https://airoasting.com/claude-code-tasks.html" target="_blank" rel="noopener">바이브 코딩 실습</a> · <a href="https://airoasting.com/github-guide.html" target="_blank" rel="noopener">Github 업로드</a></td>
+            <td class="col-mode">실습</td>
+          </tr>
+          <tr class="break-row">
+            <td class="col-time">10:50 – 11:00</td>
+            <td class="col-topic">휴식</td>
+            <td class="col-mode"></td>
+          </tr>
+          <tr>
+            <td class="col-time">11:00 – 12:00</td>
+            <td class="col-topic"><span class="topic-num">3.</span><a href="https://airoasting.com/claude-code-tasks.html#task5" target="_blank" rel="noopener">데이터 분석 및 분석 보고서 만들기</a> · <a href="https://airoasting.com/mcp-examples.html#mcp-kakao" target="_blank" rel="noopener">카카오톡 등 MCP 연결</a></td>
+            <td class="col-mode">실습</td>
+          </tr>
+          <tr class="break-row">
+            <td class="col-time">12:00 – 13:00</td>
+            <td class="col-topic">점심</td>
+            <td class="col-mode"></td>
+          </tr>
+          <tr>
+            <td class="col-time">13:00 – 13:50</td>
+            <td class="col-topic"><span class="topic-num">4.</span><a href="https://airoasting.com/harness-engineering.html" target="_blank" rel="noopener">하네스 엔지니어링 실전</a> · <a href="https://airoasting.com/skills.html" target="_blank" rel="noopener">스킬 만들기</a></td>
+            <td class="col-mode">강의</td>
+          </tr>
+          <tr class="break-row">
+            <td class="col-time">13:50 – 14:00</td>
+            <td class="col-topic">휴식</td>
+            <td class="col-mode"></td>
+          </tr>
+          <tr>
+            <td class="col-time">14:00 – 15:00</td>
+            <td class="col-topic"><span class="topic-num">5.</span>AX 트렌드 2026: 개인과 조직은 어떻게 바뀌어야 하는가?</td>
+            <td class="col-mode">강의</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p class="homework-row"><span class="homework-label">개별 과제.</span> 업무 자동화 대상 SKILL 생성 및 GitHub 통해 공유</p>
+
+      <div class="total-row">
+        <span class="total-label">Day 1</span>
+        <span class="total-value">총 5시간 <span class="total-note">(점심 1시간 별도, 09:00 – 15:00)</span></span>
+      </div>
+    </main>
+
+  </div>
+</section>
+
+<section class="slide">
+
+  <div class="top-bar">
+    <div class="accent-dark"></div>
+  </div>
+
+  <div class="main">
+
+    <!-- LEFT: Title block -->
+    <aside class="left">
+      <div class="left-content">
+        <img src="assets/posco.svg" alt="포스코" class="client-logo">
+        <div class="eyebrow">AX 교육 · 2일차 · 8월 28일 (금)</div>
+        <h1 class="english-title"><span class="title-line1">AI 에이전트를 고용하라</span><br><span class="title-line2">하네스 엔지니어링 실전 워크샵</span></h1>
+        <p class="korean-subtitle">Day 2, 개별 과제 회고부터<br>컴퍼니 브레인 구축까지</p>
+      </div>
+      <div class="left-footer">
+        <div class="liner-mark">
+          <img src="assets/라이너.png" alt="Liner" class="liner-logo">
+          <img src="assets/client_logo3.png" alt="멘토 라이브러리" class="mentor-logo">
+        </div>
+      </div>
+    </aside>
+
+    <!-- RIGHT: Curriculum -->
+    <main class="right">
+      <div class="right-header">
+        <h2 class="right-title">Day 2. AI 에이전트 고용 실전</h2>
+      </div>
+
+      <table class="curriculum">
+        <thead>
+          <tr>
+            <th class="col-time">시간</th>
+            <th class="col-topic" style="text-align:left;">주제</th>
+            <th class="col-mode">방식</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="col-time">08:00 – 08:40</td>
+            <td class="col-topic"><span class="topic-num">1.</span><a href="https://airoasting.com/showcase-skills.html" target="_blank" rel="noopener">개별 과제 발표</a> 및 회고</td>
+            <td class="col-mode">토론</td>
+          </tr>
+          <tr class="break-row">
+            <td class="col-time">08:40 – 08:50</td>
+            <td class="col-topic">휴식</td>
+            <td class="col-mode"></td>
+          </tr>
+          <tr>
+            <td class="col-time">08:50 – 09:40</td>
+            <td class="col-topic"><span class="topic-num">2.</span>구글 스프레드시트 기반 <a href="https://airoasting.com/claude-code-tasks.html#task6" target="_blank" rel="noopener">대시보드</a> 만들기</td>
+            <td class="col-mode">실습</td>
+          </tr>
+          <tr class="break-row">
+            <td class="col-time">09:40 – 09:50</td>
+            <td class="col-topic">휴식</td>
+            <td class="col-mode"></td>
+          </tr>
+          <tr>
+            <td class="col-time">09:50 – 10:40</td>
+            <td class="col-topic"><span class="topic-num">3.</span><a href="https://airoasting.com/mcp-examples.html#mcp-stock" target="_blank" rel="noopener">금융감독원 MCP 연결</a>을 통한 종목 분석 보고서 설계</td>
+            <td class="col-mode">실습</td>
+          </tr>
+          <tr class="break-row">
+            <td class="col-time">10:40 – 10:50</td>
+            <td class="col-topic">휴식</td>
+            <td class="col-mode"></td>
+          </tr>
+          <tr>
+            <td class="col-time">10:50 – 12:00</td>
+            <td class="col-topic"><span class="topic-num">4.</span><a href="https://airoasting.com/seven-steps.html" target="_blank" rel="noopener">AI와 함께 일하는 7단계</a> · 하네스 및 <a href="https://airoasting.com/loop-engineering.html" target="_blank" rel="noopener">루프 엔지니어링</a> 실전</td>
+            <td class="col-mode">실습</td>
+          </tr>
+          <tr class="break-row">
+            <td class="col-time">12:00 – 13:00</td>
+            <td class="col-topic">점심</td>
+            <td class="col-mode"></td>
+          </tr>
+          <tr>
+            <td class="col-time">13:00 – 13:40</td>
+            <td class="col-topic"><span class="topic-num">5.</span>컴퍼니 브레인 구축 (스킬 라이브러리 · MCP 허브 · LLM Wiki)</td>
+            <td class="col-mode">강의</td>
+          </tr>
+          <tr>
+            <td class="col-time">13:40 – 14:00</td>
+            <td class="col-topic">Q&amp;A</td>
+            <td class="col-mode">랩업</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="total-row">
+        <span class="total-label">Day 2</span>
+        <span class="total-value">총 5시간 <span class="total-note">(점심 1시간 별도, 08:00 – 14:00)</span></span>
+      </div>
+    </main>
+
+  </div>
+</section>
+
+
+<section class="slide self-intro">
+  <div class="self-intro-inner">
+    <div class="self-intro-bar"></div>
+    <h2 class="self-intro-title">
+      <span class="self-intro-title-main">자기 소개를 부탁 드립니다!</span>
+      <span class="self-intro-title-note">(워크샵 중에는 리더님으로 호칭 하겠습니다.)</span>
+    </h2>
+    <ul class="self-intro-list">
+      <li>성함 및 어디서 어떤 일을 하고 계신지요?</li>
+      <li>현재 AI를 주로 어떤 목적과 방식으로 활용하고 계신지요?</li>
+      <li>현재 유료로 구독 중인 AI 서비스는 무엇인가요?</li>
+      <li>내 업무 중 AI를 적용해보고 싶은 영역은 무엇인가요?</li>
+      <li>이번 워크샵을 통해 무엇을 배우고 싶으신지요?</li>
+    </ul>
+  </div>
+</section>
+
+
+
+<section class="slide preparation">
+
+  <div class="top-bar">
+    <div class="accent-dark"></div>
+  </div>
+
+  <div class="main">
+
+    <!-- LEFT: Title block -->
+    <aside class="left">
+      <div class="left-content">
+        <img src="assets/posco.svg" alt="포스코" class="client-logo">
+        <div class="eyebrow">AX 교육 · 하네스 엔지니어링 워크샵</div>
+        <h1 class="english-title">사전 준비사항</h1>
+        <p class="korean-subtitle">워크샵 참석 전에 꼭 확인하세요</p>
+      </div>
+      <div class="left-footer">
+        <div class="liner-mark">
+          <img src="assets/라이너.png" alt="Liner" class="liner-logo">
+          <img src="assets/client_logo3.png" alt="멘토 라이브러리" class="mentor-logo">
+        </div>
+      </div>
+    </aside>
+
+    <!-- RIGHT: Requirements -->
+    <main class="right">
+      <div class="right-header">
+        <h2 class="right-title">사전 준비사항 체크리스트</h2>
+      </div>
+
+      <ul class="requirements-list">
+        <li>
+          <div class="requirement-num">1</div>
+          <div class="requirement-item">
+            <div class="requirement-title">클로드 유료 구독</div>
+            <div class="requirement-desc"><a href="https://claude.com/pricing" target="_blank" rel="noopener">Claude Pro 이상 구독</a> 필수 (Max 5x 이상 권장이나, 먼저 Pro로 사용하신 후 필요에 따라 업그레이드 하시면 됩니다.)</div>
+          </div>
+        </li>
+
+        <li>
+          <div class="requirement-num">2</div>
+          <div class="requirement-item">
+            <div class="requirement-title">Claude Desktop 설치</div>
+            <div class="requirement-desc"><a href="https://claude.ai/download" target="_blank" rel="noopener">Claude Desktop 앱을 다운로드</a>해서 설치하고 실행합니다.</div>
+          </div>
+        </li>
+
+        <li>
+          <div class="requirement-num">3</div>
+          <div class="requirement-item">
+            <div class="requirement-title">Git 설치</div>
+            <div class="requirement-desc"><a href="https://git-scm.com/download/win" target="_blank" rel="noopener">Git 설치 페이지</a>에서 설치 파일을 받아 계속 다음(Next) 버튼을 눌러 설치하고, 설치가 끝나면 <strong style="color:#c62828;">컴퓨터를 재부팅</strong>합니다.<br><br>· 윈도우 사용 컴퓨터: <strong>Git for Windows/x64 Setup</strong> 선택해서 설치 (<a href="https://airoasting.com/github-guide.html" target="_blank" rel="noopener">Git이 무엇인가요?</a>)<br>· 맥북: <a href="https://airoasting.com/claude-code-101.html" target="_blank" rel="noopener">Git 설치 방법</a>을 확인하여 설치</div>
+          </div>
+        </li>
+
+        <li>
+          <div class="requirement-num">4</div>
+          <div class="requirement-item">
+            <div class="requirement-title">GitHub 개인 계정 가입</div>
+            <div class="requirement-desc"><a href="https://github.com/signup" target="_blank" rel="noopener">github.com</a>에서 개인 계정으로 가입합니다. (<a href="https://airoasting.com/github-guide.html" target="_blank" rel="noopener">github가 무엇인가요?</a>)</div>
+          </div>
+        </li>
+
+        <li>
+          <div class="requirement-num">5</div>
+          <div class="requirement-item">
+            <div class="requirement-title">강의 교재 미리 읽어보기</div>
+            <div class="requirement-desc"><a href="https://airoasting.com" target="_blank" rel="noopener">비즈니스 리더를 위한 Claude 완전 정복</a></div>
+          </div>
+        </li>
+      </ul>
+
+    </main>
+
+  </div>
+</section>
+
+
+<section class="slide profile">
+
+  <div class="top-bar"><div class="accent-dark"></div></div>
+
+  <div class="split">
+
+    <!-- LEFT: Profile sidebar -->
+    <aside class="left">
+      <div class="brand-mark"><img src="assets/라이너.png" alt="Liner"></div>
+
+      <div class="photo-frame">
+        <img class="photo" src="assets/jaydenkang_final2.jpg" alt="강정구 프로필 사진">
+      </div>
+
+      <div>
+        <div class="name-row">
+          <span class="name">강정구</span>
+          <span class="name-en">Jayden Kang</span>
+        </div>
+        <div class="tagline">AI-driven Strategist · Go-to-Market &amp; M&amp;A</div>
+      </div>
+
+      <ul class="bullets now-card">
+        <li><span class="now-org"><a href="https://liner.com" target="_blank" rel="noopener">라이너</a> <span class="now-org-en">(Liner)</span></span> <span class="now-role">AI 전략 총괄</span></li>
+        <li><span class="now-org">대통령직속 국민경제자문회의</span> <span class="now-role">AI경제 정책자문단 위원</span></li>
+      </ul>
+
+    </aside>
+
+    <!-- RIGHT: 경력 / 사외 이사 / 학력 / 저서 -->
+    <main class="right">
+      <div class="section">
+        <h2 class="section-title">경력<span class="title-en">Career</span></h2>
+        <ul class="bullets">
+          <li><strong>라이너</strong> AI 전략 총괄 · Head of AI Strategy (2026~현재)</li>
+          <li><strong>카카오엔터테인먼트</strong> 본부장 · VP (2020~2026)</li>
+          <li>美 <strong>타파스엔터테인먼트</strong> 최고운영책임 · COO (2023~2025)</li>
+          <li><strong>라인 태국사업</strong> 최고전략책임 · CSO (2017~2020)</li>
+          <li><strong>베인앤컴퍼니</strong> 이사 (2014~2017)</li>
+          <li><strong>커니코리아</strong> 팀장 (2006~2014)</li>
+        </ul>
+      </div>
+
+      <div class="section">
+        <h2 class="section-title">사외 이사 · 자문<span class="title-en">Board &amp; Advisory</span></h2>
+        <ul class="bullets">
+          <li><strong>대통령직속 국민경제자문회의</strong> AI경제 정책자문단 위원 (2026~현재)</li>
+          <li><strong>포도텅</strong> (텐센트–카카오엔터테인먼트 JV, 홍콩 법인), 2023~2025</li>
+          <li><strong>라인맨</strong> (태국 #1 배달 서비스, 싱가포르 법인), 2019~2020</li>
+        </ul>
+      </div>
+
+      <div class="section">
+        <h2 class="section-title">학력<span class="title-en">Education</span></h2>
+        <ul class="bullets">
+          <li>美 미시간대학교 로스경영대학원 MBA <span class="edu-en">(Stephen M. Ross School of Business at the University of Michigan)</span></li>
+          <li>서울대학교 경제학부</li>
+        </ul>
+      </div>
+
+      <div class="section">
+        <h2 class="section-title">저서<span class="title-en">Publications</span></h2>
+        <ul class="bullets">
+          <li>저서, <a href="https://www.yes24.com/product/goods/143646599" target="_blank" rel="noopener">『디지털 방콕 인사이트』</a> (파지트, 2025)</li>
+          <li>공저, <a href="https://lib.sen.go.kr/lib/intro/search/detail.do?vCtrl=5286268173&isbn=9788966580118&menu_idx=40" target="_blank" rel="noopener">『글로벌 리테일 인사이트』</a> (한국체인스토어협회출판부, 2013)</li>
+        </ul>
+      </div>
+    </main>
+
+  </div>
+</section>
+
+<section class="slide profile">
+
+  <div class="top-bar"><div class="accent-dark"></div></div>
+
+  <div class="running-head">
+    <div><span class="rh-name">강정구 Jayden Kang</span><span class="rh-role"> · 라이너 AI 전략 총괄</span></div>
+    <div class="selective-label">일부 발췌</div>
+  </div>
+  <div class="split split-even">
+
+    <!-- LEFT: Lectures + Workshops -->
+    <aside class="left">
+      <div class="section">
+        <h2 class="section-title">AI 시대, 리더십 전환<span class="title-en">Lectures</span></h2>
+        <ul class="bullets">
+          <li>조선일보 AI 초격차 전략 포럼, “AI 에이전트 시대, 기업은 무엇을 재설계해야 할까”</li>
+          <li>삼성종합기술원, “AI 시대의 바이브 리서치 세미나”</li>
+          <li>연세대 최고경영자과정, “AI 시대, 디지털 리더의 생존 전략”</li>
+          <li>고려대학교 노동대학원, “AI활용기법 세미나”</li>
+          <li>서강대학교 기술전문대학원 특강, “AI 시대, 벤처창업과 기업가 정신”</li>
+          <li>전자신문, “AX 시대의 리더십: 엔터프라이즈 서치 넘어 인텔리전스로”</li>
+          <li>스타트업 얼라이언스: 국회 보좌관 모임, “AI 시대의 리더십”</li>
+          <li>게스코리아, “AI 트렌드 2026: AI 전환 시대의 핵심 역량”</li>
+          <li>신원, “AI 에이전트 시대, 기업 경쟁력 강화 전략”</li>
+          <li>한국공항공사, “AI 에이전트 시대, 우리 일은 어떻게 바뀌는가?”</li>
+        </ul>
+      </div>
+
+      <div class="section">
+        <h2 class="section-title">AI 에이전트 설계 실전 워크샵<span class="title-en">Workshops</span></h2>
+        <ul class="bullets">
+          <li>포스코, “AI 에이전트를 고용하라: 하네스 엔지니어링 2일 실전 워크샵”</li>
+          <li>LG전자 최고경영자 대상, 하네스 엔지니어링 코칭</li>
+          <li>롯데미래전략연구소, “하네스 엔지니어링 실전 워크샵”</li>
+          <li>프리미어파트너스, “클로드 코드 실전 워크샵”</li>
+          <li>신한벤처투자, VC 투자자 대상 바이브 코딩 워크샵</li>
+          <li>경기평택항만공사, “바이브 코딩 실전 워크샵”</li>
+          <li>이랜드재단, 자립준비청년 대상 “AI 활용기법 워크샵”</li>
+          <li>멘토라이브러리 (2026.02~), “AI 에이전트를 고용하라, 하네스 엔지니어링 2일 실전 워크샵”</li>
+        </ul>
+      </div>
+    </aside>
+
+    <!-- RIGHT: Press -->
+    <main class="right">
+      <div class="right-stack">
+        <div class="section">
+          <h2 class="section-title">관련 기사<span class="title-en">Press</span></h2>
+
+          <div class="news-group">
+            <div class="news-title">라이너 AI 전략 총괄</div>
+            <ul class="bullets">
+              <li>2026.07.22, <a class="ext" href="https://www.etnews.com/20260722000094" target="_blank" rel="noopener">“[ET단상] AI 전환 성패, 암묵지 자산화에 달렸다”</a>, 전자신문</li>
+              <li>2026.04.27, <a class="ext" href="https://www.etnews.com/20260427000084" target="_blank" rel="noopener">“라이너, 환각 줄인 AI 검색으로 기업 AX 파트너 자리매김”</a>, 전자신문</li>
+              <li>2026.04.14, <a class="ext" href="https://www.inews24.com/view/1960074" target="_blank" rel="noopener">“[K-AI 이노베이터] 韓 AI 혁신 기업 한 자리에”</a>, 아이뉴스24</li>
+              <li>2026.02.20, <a class="ext" href="https://biz.chosun.com/it-science/ict/2026/02/20/MSA6ANNLRZDVDACASIA6QVBOG4/" target="_blank" rel="noopener">“라이너, 강정구 AI 전략 총괄 영입… 글로벌 B2B 시장 공략”</a>, 조선일보</li>
+            </ul>
+          </div>
+
+          <div class="news-group">
+            <div class="news-title">카카오엔터테인먼트 글로벌사업 본부장 &amp; 미 타파스엔터테인먼트 COO</div>
+            <ul class="bullets">
+              <li>2024.09.25, <a class="ext" href="https://www.fnnews.com/news/202409251411425604" target="_blank" rel="noopener">“북미시장 디지털 만화시장 극초기단계 [문화콘텐츠포럼]”</a>, 파이낸셜뉴스</li>
+              <li>2023.01.24, <a class="ext" href="https://techcrunch.com/2023/01/24/can-korean-digital-storytelling-platforms-captivate-north-american-and-european-audiences/" target="_blank" rel="noopener">“Can Korean digital storytelling platforms captivate North American and European audiences?”</a>, TechCrunch</li>
+              <li>2023.06.20, <a class="ext" href="https://www.forbes.com/sites/johnkang/2023/06/20/baby-shark-creator-grows-up/" target="_blank" rel="noopener">“‘Baby Shark’ Creator Grows Up”</a>, Forbes</li>
+              <li>2022.02.03, <a class="ext" href="https://biz.chosun.com/industry/company/2022/02/03/W42UPFBCA5AKFMIGC5N6X3DPDY/" target="_blank" rel="noopener">“글로벌 프리미엄 전략으로 ‘웹툰계 넷플릭스’ 되겠다”</a>, 이코노미조선</li>
+              <li>2021.10.27, “K-Webtoon Goes Global”, Arirang TV</li>
+              <li>2021.09.16, <a class="ext" href="https://n.news.naver.com/article/009/0004853315" target="_blank" rel="noopener">“세계지식포럼, 카카오엔터 ‘콘텐츠 개발에 1조 투자…’”</a>, 매일경제</li>
+            </ul>
+          </div>
+
+          <div class="news-group">
+            <div class="news-title">라인 태국 CSO</div>
+            <ul class="bullets">
+              <li>2020.07.30, <a class="ext" href="https://www.techinasia.com/line-man-banks-110m-merges-wongnai" target="_blank" rel="noopener">“Line Man banks $110m, merges with Wongnai”</a>, Tech in Asia</li>
+              <li>2019.12.25, <a class="ext" href="https://www.koreatimes.co.kr/business/tech-science/20191225/interview-line-man-expands-reach-in-thailand" target="_blank" rel="noopener">“LINE MAN expands reach in Thailand”</a>, The Korea Times</li>
+              <li>2019.09.19, <a class="ext" href="https://www.bangkokpost.com/business/general/1753409/line-hopeful-of-thai-unicorn" target="_blank" rel="noopener">“Line hopeful of Thai unicorn”</a>, Bangkok Post</li>
+              <li>2019.03.14, <a class="ext" href="https://www.bangkokpost.com/business/1644092/line-puts-20m-into-making-a-unicorn" target="_blank" rel="noopener">“Line puts $20m into making a unicorn”</a>, Bangkok Post</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </main>
+
+  </div>
+</section>
+
+<section class="slide closing">
+
+  <div class="top-bar"><div class="accent-dark"></div></div>
+
+  <div class="cover-inner">
+
+    <div class="closing-body">
+      <div class="cover-eyebrow">실전 워크샵 2일 과정 제안서</div>
+      <h1 class="closing-title">감사합니다</h1>
+      <ul class="closing-links">
+        <li><span>강의 교재</span><a href="https://airoasting.com" target="_blank" rel="noopener">airoasting.com</a></li>
+        <li><span>라이너</span><a href="https://liner.com" target="_blank" rel="noopener">liner.com</a></li>
+        <li><span>LinkedIn</span><a href="https://www.linkedin.com/in/jayden-kang/" target="_blank" rel="noopener">linkedin.com/in/jayden-kang</a></li>
+      </ul>
+    </div>
+
+    <div class="cover-foot">
+      <div>
+        <div class="cover-presenter-name">강정구 · Jayden Kang (jade@linercorp.com)</div>
+        <div class="cover-presenter-role">라이너(Liner) · AI 전략 총괄, 국민경제자문회의 · AI경제 정책자문단</div>
+      </div>
+      <div class="cover-partner-logos">
+        <img src="assets/라이너.png" alt="Liner" class="cover-liner">
+        <img src="assets/client_logo3.png" alt="멘토 라이브러리" class="cover-mentor">
+      </div>
+    </div>
+
+  </div>
+
+</section>
+
+</body>
+</html>
