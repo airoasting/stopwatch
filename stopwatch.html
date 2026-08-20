@@ -2,180 +2,440 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>스탑워치</title>
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⏱️</text></svg>">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⏱️</text></svg>">
 <style>
-  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --bg: #0b0d12;
+    --surface: #14171f;
+    --surface-2: #1c202b;
+    --border: #2a2f3d;
+    --text: #eef0f5;
+    --text-dim: #8b93a7;
+    --accent: #4f8dff;
+    --accent-dim: #2a4a8f;
+    --danger: #ff5470;
+    --danger-dim: #4a1f2c;
+    --success: #34d399;
+    --focus: #7db4ff;
+  }
+
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+  html, body {
+    height: 100%;
+    margin: 0;
+  }
+
   body {
-    min-height: 100vh;
+    background: radial-gradient(circle at 50% -10%, #1a1f2c 0%, var(--bg) 60%);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Pretendard, Roboto, sans-serif;
     display: flex;
     align-items: center;
     justify-content: center;
-    background: #0f1115;
-    color: #f5f5f7;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    -webkit-tap-highlight-color: transparent;
+    min-height: 100vh;
+    padding: 24px;
+    user-select: none;
   }
+
   .card {
     width: 100%;
-    max-width: 360px;
-    padding: 40px 28px;
-    text-align: center;
+    max-width: 420px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 24px;
+    padding: 36px 28px 28px;
+    box-shadow: 0 30px 60px -20px rgba(0,0,0,0.6);
   }
-  .time {
+
+  .status {
+    text-align: center;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-bottom: 8px;
+    height: 16px;
+    transition: color 0.2s ease;
+  }
+  .status.running { color: var(--success); }
+  .status.paused { color: var(--danger); }
+
+  .display {
+    text-align: center;
     font-variant-numeric: tabular-nums;
     font-feature-settings: "tnum";
-    font-size: 64px;
-    font-weight: 200;
-    letter-spacing: 1px;
-    margin-bottom: 36px;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+    color: var(--text);
+    display: flex;
+    align-items: baseline;
+    justify-content: center;
+    line-height: 1;
+    margin: 4px 0 32px;
+    flex-wrap: wrap;
   }
-  .time .cs { font-size: 32px; color: #8a8f98; }
-  .controls { display: flex; gap: 12px; justify-content: center; }
+  .display .main {
+    font-size: clamp(44px, 12vw, 64px);
+  }
+  .display .cs {
+    font-size: clamp(22px, 6vw, 30px);
+    color: var(--text-dim);
+    margin-left: 4px;
+  }
+
+  .controls {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 8px;
+  }
+
   button {
-    flex: 1;
-    padding: 16px 0;
+    font-family: inherit;
     font-size: 16px;
-    font-weight: 500;
+    font-weight: 600;
     border: none;
     border-radius: 14px;
+    padding: 16px 0;
     cursor: pointer;
-    color: #f5f5f7;
-    background: #2a2d35;
-    transition: transform .08s ease, background .15s ease, opacity .15s ease;
+    transition: transform 0.08s ease, filter 0.15s ease, background 0.15s ease, opacity 0.15s ease;
+    -webkit-tap-highlight-color: transparent;
   }
-  button:hover { background: #353942; }
-  button:active { transform: scale(0.96); }
-  button:focus-visible { outline: 2px solid #6ea8fe; outline-offset: 2px; }
-  button:disabled { opacity: .35; cursor: not-allowed; }
-  #startBtn { background: #2e7d4f; }
-  #startBtn:hover { background: #36925c; }
-  #startBtn.running { background: #b03636; }
-  #startBtn.running:hover { background: #c44040; }
-  .laps {
-    list-style: none;
-    margin-top: 28px;
-    max-height: 220px;
-    overflow-y: auto;
-    text-align: left;
+  button:active:not(:disabled) { transform: scale(0.96); }
+  button:focus-visible {
+    outline: 2px solid var(--focus);
+    outline-offset: 2px;
   }
-  .laps li {
+  button:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+  }
+
+  .btn-primary {
+    background: var(--accent);
+    color: #fff;
+  }
+  .btn-primary:hover:not(:disabled) { filter: brightness(1.1); }
+
+  .btn-danger {
+    background: var(--danger-dim);
+    color: var(--danger);
+  }
+  .btn-danger:hover:not(:disabled) { filter: brightness(1.3); }
+
+  .btn-secondary {
+    background: var(--surface-2);
+    color: var(--text);
+    border: 1px solid var(--border);
+  }
+  .btn-secondary:hover:not(:disabled) { background: #232836; }
+
+  .lap-section {
+    margin-top: 20px;
+    border-top: 1px solid var(--border);
+    padding-top: 16px;
+  }
+
+  .lap-header {
     display: flex;
     justify-content: space-between;
-    padding: 12px 4px;
-    font-variant-numeric: tabular-nums;
-    font-size: 15px;
-    border-bottom: 1px solid #22252c;
-    color: #c7ccd4;
+    font-size: 12px;
+    color: var(--text-dim);
+    padding: 0 4px 8px;
+    letter-spacing: 0.04em;
   }
-  .laps li .idx { color: #8a8f98; }
+
+  .lap-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    max-height: 220px;
+    overflow-y: auto;
+  }
+  .lap-list::-webkit-scrollbar { width: 6px; }
+  .lap-list::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+  .lap-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 4px;
+    font-size: 14px;
+    font-variant-numeric: tabular-nums;
+    border-bottom: 1px solid var(--surface-2);
+    animation: slideIn 0.2s ease;
+  }
+  .lap-item:last-child { border-bottom: none; }
+
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateY(-6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .lap-num {
+    color: var(--text-dim);
+    min-width: 48px;
+  }
+  .lap-split {
+    color: var(--text-dim);
+    flex: 1;
+    text-align: right;
+    padding-right: 12px;
+  }
+  .lap-total {
+    color: var(--text);
+    font-weight: 600;
+    min-width: 96px;
+    text-align: right;
+  }
+  .lap-item.best .lap-split { color: var(--success); }
+  .lap-item.worst .lap-split { color: var(--danger); }
+
+  .empty {
+    text-align: center;
+    color: var(--text-dim);
+    font-size: 13px;
+    padding: 24px 0 8px;
+  }
+
+  .hint {
+    text-align: center;
+    font-size: 11px;
+    color: var(--text-dim);
+    opacity: 0.65;
+    margin-top: 18px;
+    letter-spacing: 0.02em;
+  }
+  .hint kbd {
+    font-family: inherit;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 1px 5px;
+    font-size: 10px;
+  }
+
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  @media (max-width: 380px) {
+    .card { padding: 28px 18px 20px; border-radius: 18px; }
+  }
 </style>
 </head>
 <body>
-  <main class="card">
-    <div class="time" id="display" aria-live="off">00:00<span class="cs">.00</span></div>
-    <div class="controls">
-      <button id="lapBtn" disabled>랩</button>
-      <button id="startBtn">시작</button>
+  <div class="card">
+    <div class="status" id="status" role="status" aria-live="polite">준비</div>
+    <div class="display">
+      <span class="main" id="mainTime">00:00</span><span class="cs" id="csTime">.00</span>
     </div>
-    <ul class="laps" id="laps"></ul>
-  </main>
+    <div class="sr-only" id="srAnnounce" role="status" aria-live="polite"></div>
+
+    <div class="controls">
+      <button class="btn-primary" id="startBtn" aria-pressed="false">시작</button>
+      <button class="btn-danger" id="resetBtn" disabled>리셋</button>
+    </div>
+    <button class="btn-secondary" id="lapBtn" style="width:100%;" disabled>랩</button>
+
+    <div class="lap-section">
+      <div class="lap-header">
+        <span>랩</span>
+        <span>기록</span>
+      </div>
+      <ul class="lap-list" id="lapList" aria-label="랩 기록"></ul>
+      <div class="empty" id="emptyMsg">기록된 랩이 없습니다</div>
+    </div>
+
+    <div class="hint"><kbd>Space</kbd> 시작/정지 · <kbd>L</kbd> 랩 · <kbd>R</kbd> 리셋</div>
+  </div>
 
 <script>
-  const display = document.getElementById('display');
-  const startBtn = document.getElementById('startBtn');
-  const lapBtn = document.getElementById('lapBtn');
-  const lapsEl = document.getElementById('laps');
+(function () {
+  'use strict';
 
   let running = false;
-  let startTime = 0;      // 현재 구간 시작 시각
-  let elapsed = 0;        // 누적 경과(ms)
+  let startTime = 0;
+  let accumulated = 0;
   let rafId = null;
-  let lapCount = 0;
-  let lastLapTime = 0;
+  let laps = [];
 
-  function now() { return performance.now(); }
+  const statusEl = document.getElementById('status');
+  const mainEl = document.getElementById('mainTime');
+  const csEl = document.getElementById('csTime');
+  const startBtn = document.getElementById('startBtn');
+  const resetBtn = document.getElementById('resetBtn');
+  const lapBtn = document.getElementById('lapBtn');
+  const lapList = document.getElementById('lapList');
+  const emptyMsg = document.getElementById('emptyMsg');
+  const srAnnounce = document.getElementById('srAnnounce');
 
-  function format(ms) {
+  function pad(n, len) {
+    return String(n).padStart(len, '0');
+  }
+
+  function formatTime(ms) {
     const totalCs = Math.floor(ms / 10);
     const cs = totalCs % 100;
     const totalSec = Math.floor(totalCs / 100);
-    const s = totalSec % 60;
+    const sec = totalSec % 60;
     const totalMin = Math.floor(totalSec / 60);
-    const m = totalMin % 60;
-    const h = Math.floor(totalMin / 60);
-    const p = (n) => String(n).padStart(2, '0');
-    const main = h > 0 ? `${p(h)}:${p(m)}:${p(s)}` : `${p(m)}:${p(s)}`;
-    return { main, cs: p(cs) };
+    const min = totalMin % 60;
+    const hr = Math.floor(totalMin / 60);
+    const main = hr > 0 ? `${pad(hr,2)}:${pad(min,2)}:${pad(sec,2)}` : `${pad(min,2)}:${pad(sec,2)}`;
+    return { main, cs: pad(cs, 2) };
+  }
+
+  function currentElapsed() {
+    return running ? accumulated + (performance.now() - startTime) : accumulated;
   }
 
   function render() {
-    const total = elapsed + (running ? now() - startTime : 0);
-    const { main, cs } = format(total);
-    display.innerHTML = `${main}<span class="cs">.${cs}</span>`;
+    const { main, cs } = formatTime(currentElapsed());
+    mainEl.textContent = main;
+    csEl.textContent = '.' + cs;
   }
 
   function tick() {
     render();
-    rafId = requestAnimationFrame(tick);
+    if (running) rafId = requestAnimationFrame(tick);
+  }
+
+  function announce(msg) {
+    srAnnounce.textContent = msg;
+  }
+
+  function updateButtons() {
+    if (running) {
+      startBtn.textContent = '정지';
+      startBtn.classList.remove('btn-primary');
+      startBtn.classList.add('btn-danger');
+      startBtn.setAttribute('aria-pressed', 'true');
+      resetBtn.disabled = true;
+      lapBtn.disabled = false;
+      statusEl.textContent = '진행 중';
+      statusEl.className = 'status running';
+    } else {
+      const hasTime = accumulated > 0;
+      startBtn.textContent = hasTime ? '재개' : '시작';
+      startBtn.classList.remove('btn-danger');
+      startBtn.classList.add('btn-primary');
+      startBtn.setAttribute('aria-pressed', 'false');
+      resetBtn.disabled = !hasTime;
+      lapBtn.disabled = true;
+      statusEl.textContent = hasTime ? '일시정지' : '준비';
+      statusEl.className = hasTime ? 'status paused' : 'status';
+    }
   }
 
   function start() {
+    if (running) return;
     running = true;
-    startTime = now();
-    rafId = requestAnimationFrame(tick);
-    startBtn.textContent = '정지';
-    startBtn.classList.add('running');
-    lapBtn.textContent = '랩';
-    lapBtn.disabled = false;
+    startTime = performance.now();
+    updateButtons();
+    tick();
   }
 
   function stop() {
+    if (!running) return;
+    accumulated += performance.now() - startTime;
     running = false;
-    elapsed += now() - startTime;
-    cancelAnimationFrame(rafId);
+    if (rafId) cancelAnimationFrame(rafId);
     render();
-    startBtn.textContent = '재개';
-    startBtn.classList.remove('running');
-    lapBtn.textContent = '리셋';
+    updateButtons();
   }
 
   function reset() {
-    running = false;
-    cancelAnimationFrame(rafId);
-    elapsed = 0;
-    startTime = 0;
-    lapCount = 0;
-    lastLapTime = 0;
-    lapsEl.innerHTML = '';
+    if (running) return;
+    accumulated = 0;
+    laps = [];
+    renderLaps();
     render();
-    startBtn.textContent = '시작';
-    lapBtn.textContent = '랩';
-    lapBtn.disabled = true;
+    updateButtons();
+    announce('초기화되었습니다');
   }
 
-  function lap() {
-    const total = elapsed + (running ? now() - startTime : 0);
-    const split = total - lastLapTime;
-    lastLapTime = total;
-    lapCount++;
-    const t = format(split);
-    const li = document.createElement('li');
-    li.innerHTML = `<span class="idx">랩 ${lapCount}</span><span>${t.main}.${t.cs}</span>`;
-    lapsEl.prepend(li);
+  function addLap() {
+    if (!running) return;
+    const total = currentElapsed();
+    const prevTotal = laps.length > 0 ? laps[laps.length - 1].total : 0;
+    const split = total - prevTotal;
+    laps.push({ total, split, index: laps.length + 1 });
+    renderLaps();
+    const f = formatTime(total);
+    announce(`랩 ${laps.length}, 기록 ${f.main}.${f.cs}`);
   }
 
-  startBtn.addEventListener('click', () => running ? stop() : start());
-  lapBtn.addEventListener('click', () => running ? lap() : reset());
+  function renderLaps() {
+    lapList.innerHTML = '';
+    emptyMsg.style.display = laps.length === 0 ? 'block' : 'none';
 
-  // 스페이스: 시작/정지, L: 랩/리셋
+    if (laps.length === 0) return;
+
+    let bestIdx = -1, worstIdx = -1;
+    if (laps.length > 1) {
+      let bestVal = Infinity, worstVal = -Infinity;
+      laps.forEach((l, i) => {
+        if (l.split < bestVal) { bestVal = l.split; bestIdx = i; }
+        if (l.split > worstVal) { worstVal = l.split; worstIdx = i; }
+      });
+    }
+
+    const frag = document.createDocumentFragment();
+    for (let i = laps.length - 1; i >= 0; i--) {
+      const l = laps[i];
+      const li = document.createElement('li');
+      li.className = 'lap-item';
+      if (i === bestIdx) li.classList.add('best');
+      if (i === worstIdx) li.classList.add('worst');
+      const splitFmt = formatTime(l.split);
+      const totalFmt = formatTime(l.total);
+      li.innerHTML = `
+        <span class="lap-num">랩 ${l.index}</span>
+        <span class="lap-split">+${splitFmt.main}.${splitFmt.cs}</span>
+        <span class="lap-total">${totalFmt.main}.${totalFmt.cs}</span>
+      `;
+      frag.appendChild(li);
+    }
+    lapList.appendChild(frag);
+  }
+
+  startBtn.addEventListener('click', () => {
+    if (running) stop(); else start();
+  });
+  resetBtn.addEventListener('click', reset);
+  lapBtn.addEventListener('click', addLap);
+
   document.addEventListener('keydown', (e) => {
-    if (e.code === 'Space') { e.preventDefault(); running ? stop() : start(); }
-    else if (e.key.toLowerCase() === 'l' && !lapBtn.disabled) { running ? lap() : reset(); }
+    if (e.code === 'Space') {
+      e.preventDefault();
+      if (running) stop(); else start();
+    } else if (e.code === 'KeyL') {
+      if (!lapBtn.disabled) addLap();
+    } else if (e.code === 'KeyR') {
+      if (!resetBtn.disabled) reset();
+    }
+  });
+
+  document.addEventListener('visibilitychange', () => {
+    if (!document.hidden && running) render();
   });
 
   render();
+  updateButtons();
+})();
 </script>
 </body>
 </html>
