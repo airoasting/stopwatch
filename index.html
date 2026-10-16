@@ -1,0 +1,283 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>스탑워치</title>
+<style>
+  :root {
+    --bg: #f6f5f2;
+    --surface: #ffffff;
+    --text: #1d1d1b;
+    --muted: #7a7a74;
+    --line: #e4e2dc;
+    --accent: #1f6f5c;
+    --accent-text: #ffffff;
+    --stop: #b4442f;
+    --best: #1f6f5c;
+    --worst: #b4442f;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #141413;
+      --surface: #1f1f1d;
+      --text: #ecebe6;
+      --muted: #8f8e88;
+      --line: #2e2e2b;
+      --accent: #4fae93;
+      --accent-text: #0f1f1a;
+      --stop: #e0775f;
+      --best: #4fae93;
+      --worst: #e0775f;
+    }
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Pretendard", "Segoe UI", sans-serif;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    padding: 48px 16px;
+  }
+  main { width: 100%; max-width: 440px; }
+
+  .display {
+    font-variant-numeric: tabular-nums;
+    font-size: clamp(56px, 17vw, 88px);
+    font-weight: 300;
+    letter-spacing: -0.02em;
+    text-align: center;
+    line-height: 1;
+    margin: 24px 0 8px;
+  }
+  .display .cs { color: var(--muted); }
+  .current-lap {
+    text-align: center;
+    color: var(--muted);
+    font-variant-numeric: tabular-nums;
+    font-size: 15px;
+    height: 20px;
+    margin-bottom: 32px;
+  }
+
+  .controls { display: flex; gap: 12px; }
+  button {
+    flex: 1;
+    height: 56px;
+    border-radius: 14px;
+    border: 1px solid var(--line);
+    background: var(--surface);
+    color: var(--text);
+    font: inherit;
+    font-size: 17px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform .08s ease, opacity .15s ease;
+  }
+  button:active { transform: scale(0.98); }
+  button:disabled { opacity: .4; cursor: default; transform: none; }
+  button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  #toggle { background: var(--accent); border-color: var(--accent); color: var(--accent-text); }
+  #toggle.running { background: var(--stop); border-color: var(--stop); }
+
+  .hint {
+    text-align: center;
+    color: var(--muted);
+    font-size: 13px;
+    margin: 14px 0 28px;
+  }
+  kbd {
+    font-family: inherit;
+    font-size: 12px;
+    border: 1px solid var(--line);
+    border-bottom-width: 2px;
+    border-radius: 5px;
+    padding: 1px 6px;
+    background: var(--surface);
+  }
+
+  .laps { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line); }
+  .laps li {
+    display: grid;
+    grid-template-columns: 64px 1fr 1fr;
+    padding: 13px 4px;
+    border-bottom: 1px solid var(--line);
+    font-variant-numeric: tabular-nums;
+    font-size: 16px;
+  }
+  .laps li span:nth-child(2), .laps li span:nth-child(3) { text-align: right; }
+  .laps li span:nth-child(3) { color: var(--muted); }
+  .laps .head { color: var(--muted); font-size: 13px; padding: 10px 4px; }
+  .laps .best span:nth-child(2) { color: var(--best); font-weight: 600; }
+  .laps .worst span:nth-child(2) { color: var(--worst); font-weight: 600; }
+</style>
+</head>
+<body>
+<main>
+  <div class="display" id="display" aria-live="off">00:00<span class="cs">.00</span></div>
+  <div class="current-lap" id="currentLap"></div>
+
+  <div class="controls">
+    <button id="lap" disabled>랩</button>
+    <button id="toggle">시작</button>
+  </div>
+  <p class="hint"><kbd>Space</kbd> 시작/정지 · <kbd>L</kbd> 랩 · <kbd>R</kbd> 초기화</p>
+
+  <ul class="laps" id="laps" hidden></ul>
+</main>
+
+<script>
+  const STORE_KEY = 'stopwatch-state-v1';
+
+  // 경과 시간 = elapsed(정지 전까지 누적) + (지금 - startedAt)
+  let elapsed = 0;
+  let startedAt = null;   // Date.now() 기준. 새로고침 후에도 이어 가기 위해 performance.now 대신 쓴다.
+  let laps = [];          // 각 랩이 끝난 시점의 누적 시간(ms)
+  let rafId = null;
+
+  const $display = document.getElementById('display');
+  const $currentLap = document.getElementById('currentLap');
+  const $toggle = document.getElementById('toggle');
+  const $lap = document.getElementById('lap');
+  const $laps = document.getElementById('laps');
+
+  const now = () => elapsed + (startedAt === null ? 0 : Date.now() - startedAt);
+  const running = () => startedAt !== null;
+
+  function fmt(ms, withCs = true) {
+    const total = Math.floor(ms / 10);
+    const cs = total % 100;
+    const s = Math.floor(total / 100) % 60;
+    const m = Math.floor(total / 6000) % 60;
+    const h = Math.floor(total / 360000);
+    const pad = n => String(n).padStart(2, '0');
+    const main = (h > 0 ? h + ':' + pad(m) : pad(m)) + ':' + pad(s);
+    return withCs ? [main, '.' + pad(cs)] : main;
+  }
+
+  function renderDisplay() {
+    const t = now();
+    const [main, cs] = fmt(t);
+    $display.innerHTML = main + '<span class="cs">' + cs + '</span>';
+    if (laps.length > 0) {
+      const lapMs = t - laps[laps.length - 1];
+      $currentLap.textContent = '랩 ' + (laps.length + 1) + '  ' + fmt(lapMs).join('');
+    } else {
+      $currentLap.textContent = '';
+    }
+  }
+
+  function renderLaps() {
+    $laps.hidden = laps.length === 0;
+    if (laps.length === 0) { $laps.innerHTML = ''; return; }
+
+    const durations = laps.map((t, i) => t - (i === 0 ? 0 : laps[i - 1]));
+    // 랩이 3개 이상일 때만 최단/최장을 표시한다. 2개에선 비교 의미가 약하다.
+    const mark = durations.length >= 3;
+    const best = Math.min(...durations);
+    const worst = Math.max(...durations);
+
+    const rows = durations.map((d, i) => {
+      let cls = '';
+      if (mark && d === best) cls = 'best';
+      else if (mark && d === worst) cls = 'worst';
+      return `<li class="${cls}"><span>${i + 1}</span><span>${fmt(d).join('')}</span><span>${fmt(laps[i]).join('')}</span></li>`;
+    }).reverse();
+
+    $laps.innerHTML = '<li class="head"><span>랩</span><span>랩 시간</span><span>누적</span></li>' + rows.join('');
+  }
+
+  function renderControls() {
+    $toggle.textContent = running() ? '정지' : (now() > 0 ? '계속' : '시작');
+    $toggle.classList.toggle('running', running());
+    if (running()) {
+      $lap.textContent = '랩';
+      $lap.disabled = false;
+    } else {
+      $lap.textContent = '초기화';
+      $lap.disabled = now() === 0;
+    }
+  }
+
+  function tick() {
+    renderDisplay();
+    rafId = requestAnimationFrame(tick);
+  }
+
+  function save() {
+    try {
+      localStorage.setItem(STORE_KEY, JSON.stringify({ elapsed, startedAt, laps }));
+    } catch (e) { /* 저장이 막힌 환경에서도 동작은 그대로 */ }
+  }
+
+  function load() {
+    try {
+      const s = JSON.parse(localStorage.getItem(STORE_KEY));
+      if (s && typeof s.elapsed === 'number' && Array.isArray(s.laps)) {
+        elapsed = s.elapsed;
+        startedAt = typeof s.startedAt === 'number' ? s.startedAt : null;
+        laps = s.laps;
+      }
+    } catch (e) { /* 무시하고 0에서 시작 */ }
+  }
+
+  function start() {
+    startedAt = Date.now();
+    rafId = requestAnimationFrame(tick);
+  }
+
+  function stop() {
+    elapsed = now();
+    startedAt = null;
+    cancelAnimationFrame(rafId);
+    renderDisplay();
+  }
+
+  function toggle() {
+    running() ? stop() : start();
+    renderControls();
+    save();
+  }
+
+  function lap() {
+    if (!running()) return;
+    laps.push(now());
+    renderLaps();
+    save();
+  }
+
+  function reset() {
+    if (running()) return;
+    elapsed = 0;
+    laps = [];
+    renderDisplay();
+    renderLaps();
+    renderControls();
+    save();
+  }
+
+  $toggle.addEventListener('click', toggle);
+  $lap.addEventListener('click', () => running() ? lap() : reset());
+
+  document.addEventListener('keydown', e => {
+    if (e.metaKey || e.ctrlKey || e.altKey) return;
+    if (e.code === 'Space') { e.preventDefault(); toggle(); }
+    else if (e.code === 'KeyL') lap();
+    else if (e.code === 'KeyR') reset();
+  });
+  // 버튼에 포커스가 있을 때 Space가 클릭으로도 처리되어 두 번 토글되는 것을 막는다.
+  document.querySelectorAll('button').forEach(b => b.addEventListener('keyup', e => {
+    if (e.code === 'Space') e.preventDefault();
+  }));
+
+  load();
+  renderDisplay();
+  renderLaps();
+  renderControls();
+  if (running()) rafId = requestAnimationFrame(tick);
+</script>
+</body>
+</html>
